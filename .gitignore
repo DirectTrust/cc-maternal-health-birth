@@ -1,0 +1,17 @@
+# Node
+node_modules/
+npm-debug.log*
+
+# VitePress build output and cache (built by CI, not committed)
+docs/.vitepress/dist/
+docs/.vitepress/cache/
+
+# One-time migration scratch input (source doc/media, not part of the published site)
+scratchpad/
+
+# IDE metadata
+.project
+.settings/
+.classpath
+.idea/
+.vscode/

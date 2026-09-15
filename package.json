@@ -1,0 +1,26 @@
+{
+  "name": "cc-maternal-health-birth",
+  "version": "1.0.0",
+  "description": "GitHub Pages repository for the cc-maternal-health-birth Use Case built on the DirectTrust Metadata and Payloads Framework",
+  "main": "index.js",
+  "scripts": {
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DirectTrust/cc-maternal-health-birth.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/DirectTrust/cc-maternal-health-birth/issues"
+  },
+  "homepage": "https://github.com/DirectTrust/cc-maternal-health-birth#readme",
+  "devDependencies": {
+    "vitepress": "^1.6.4"
+  }
+}
