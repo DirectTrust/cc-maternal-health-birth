@@ -34,8 +34,8 @@ export default defineConfig({
       { text: 'Use Case Overview', link: '/use-case-overview' },
       { text: 'Actors and Transactions', link: '/actors-and-transactions' },
       {
-        text: 'Transaction Requirements',
-        link: '/transaction-requirements',
+        text: 'Transaction Framework',
+        link: '/transaction-framework',
         collapsed: true,
         items: [
           { text: 'TX1: send-outpatient-visit-notification', link: '/tx1-send-outpatient-visit-notification' },
