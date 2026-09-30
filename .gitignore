@@ -15,3 +15,6 @@ scratchpad/
 .classpath
 .idea/
 .vscode/
+
+# macOS
+.DS_Store
