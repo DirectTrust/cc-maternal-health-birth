@@ -1,0 +1,317 @@
+---
+title: "Appendix D: FHIR Collection Bundle Packaging"
+---
+
+# Appendix D: FHIR Collection Bundle Packaging
+
+_Parallel XD and FHIR representations of the structured payload._
+
+Appendix D applies the MAP Transaction Framework to represent the structured payload as a FHIR R4 Collection Bundle. It preserves the package-level and information-object metadata semantics of XD SubmissionSet and DocumentEntry packaging. Apply these mappings with Chapter 3 and the applicable Transaction Definition; Appendix A explains standardized clinical documents and Appendix C explains classification.
+
+The appendix applies the DirectTrust MAP Framework structured data packaging pattern. It supports Chapter 3 MAP XD requirements and IHE MHD mappings based on FHIR R4. These mappings do not assert full MHD profile conformance.
+
+## Core Packaging Pattern
+
+The FHIR Metadata option carries a ZIP containing a FHIR R4 Bundle with type collection in MIME Part 2 of the Direct message. This is an alternative representation of the structured payload, parallel to the IHE XDM package; it does not change the requested Shared Activity.
+
+Each workflow unit SHALL have exactly one current SubmissionSet List, carried as the first entry of its outer Collection Bundle. Other List information objects, including a TX8 identification snapshot or a patient Change List, are distinct from that organizing List.
+
+Use one FHIR DocumentReference Resource for each packaged information object that would otherwise be represented by an XD DocumentEntry.
+
+Use List.entry.item references to associate the List with the DocumentReference Resources that describe the packaged information objects.
+
+Include the resources needed to interpret the package in the same Collection Bundle. The Content Consumer is responsible for processing the received collection; a derivative transaction may require the Content Consumer to transform it into another Bundle type for local posting or processing.
+
+The same logical package may be serialized as FHIR XML (application/fhir+xml) or FHIR JSON (application/fhir+json). The serialization changes syntax, not the package semantics or metadata values.
+
+**Conceptual equivalence:** XD SubmissionSet → FHIR List; XD DocumentEntry → FHIR DocumentReference; XDM package → FHIR Collection Bundle.
+
+### Understanding the collection
+
+Think of the package as a packing list, descriptive labels, and the actual information objects. In XD these are the SubmissionSet, DocumentEntries, and packaged files. In FHIR these are the List, DocumentReferences, and native FHIR resources or Binaries. The Collection Bundle is the container holding them all.
+
+Bundle.entry is a place where a resource resides. List.entry.item is a reference from the packing list to a DocumentReference. These similarly named elements have different jobs. The List does not contain its DocumentReferences, and a DocumentReference does not contain its payload. All are separate peer entries in the Bundle.
+
+| **Package role** | **XD representation** | **FHIR representation** |
+|----|----|----|
+| Packing list | SubmissionSet | List Bundle entry |
+| Descriptive label | DocumentEntry | DocumentReference Bundle entry |
+| Native FHIR information object | FHIR resource file | Native resource Bundle entry |
+| Non-FHIR information object | CDA, V2, TXT, HTML, PDF, or other file | Binary Bundle entry containing the file bytes |
+| Membership | SubmissionSet membership association | List.entry.item references the DocumentReference |
+| Link to actual object | DocumentEntry file locator | DocumentReference attachment.url resolves to the payload entry fullUrl |
+
+### Complete illustrative TX3 package
+
+This TX3 illustration includes the current SubmissionSet List, five DocumentReferences, the Workflow Activity Task, Birth Notification CDA, required TXT, optional HTML, and one optional Provenance Collection Bundle. Patient, source Organization, author, and intended-recipient resources support the metadata and Task references. The recipient PractitionerRole identifies the OB acting for the receiving practice. Its Endpoint is used as the Routing Target only when the applicable routing rules select it.
+
+![](/images/07-appendices/appendix-d-fhir-collection-bundle-packaging-1.png)
+
+Figure D.1. Illustrative TX3 structured payload. Membership links reach DocumentReferences; content locators reach their information objects. Supporting-resource links do not create List membership. Entry 11 is a nested Provenance Collection Bundle, not a Provenance resource peer of the outer entries.
+
+XD comparison. Each submitted information object has a DocumentEntry and membership in the current SubmissionSet. Task supporting resources are contained in its resource file. A Provenance Collection Bundle carries its own assertions and supporting resources. No support folder outside XDM.zip supplies required transmitted references.
+
+#### Corresponding XD information
+
+The following table relates each pictured Bundle entry to its XD counterpart. Not every XD counterpart is literally a Slot: some are classifications, associations, or packaged files.
+
+| **Bundle entry** | **FHIR relationship** | **Corresponding XD information** |
+|----|----|----|
+| 1 — List | Package metadata | SubmissionSet |
+| 2–6 — DocumentReferences | Referenced by List.entry.item | DocumentEntries and their SubmissionSet membership associations |
+| 7 — Task | Payload referenced by entry 2 | Task file with required supporting resources contained within that Task; the TX8 Task remains distinct from its primary identification snapshot. |
+| 8 — CDA Binary | Payload referenced by entry 3 | Packaged Birth Notification CDA file |
+| 9 — TXT Binary | Payload referenced by entry 4 | Packaged human-readable TXT file |
+| 10 — HTML Binary | Payload referenced by entry 5 | Packaged human-readable HTML file |
+| 11 — Provenance Collection Bundle | Information object referenced by entry 6; contains 1..\* Provenance entries | One FHIR Collection Bundle file, DocumentEntry, and membership; assertions target carried information objects by uniqueId. |
+| 12 — Patient | List.subject | SubmissionSet.patientId; this example uses the selected exchange identity A patient snapshot required by Task.for is contained in the XD Task; this does not merge recipient identity with source-patient metadata. |
+| 13 — Initiating Organization | ihe-authorOrg extension on List.source | SubmissionSet author classification’s authorInstitution Slot When referenced by the XD Task or Provenance, its supporting Organization is contained in each referencing resource file. |
+| 14 — Author Practitioner | List.source.reference | SubmissionSet author classification’s authorPerson Slot When referenced by the XD Task or Provenance, its supporting Practitioner is contained in each referencing resource file. |
+| 15 — Recipient PractitionerRole | List dt-intendedRecipient extension | SubmissionSet.intendedRecipient, identifying the OB in the receiving practice The Task recipient role is contained in the XD Task with its required supporting references. |
+| 16 — Recipient Practitioner | PractitionerRole.practitioner | Person component of intendedRecipient Contained alongside the recipient PractitionerRole within the XD Task. |
+| 17 — Recipient Organization | PractitionerRole.organization | Organization component of intendedRecipient Contained alongside the recipient PractitionerRole within the XD Task. |
+| 18 — Direct Endpoint | PractitionerRole.endpoint | Selected endpoint information. It is the Routing Target when routing rules select it; it is not the Information Recipient. Contained in the XD Task when required by a Task reference. |
+
+Source patient information remains a separate mapping decision. Entry 12 illustrates the selected exchange patient identity referenced by List.subject. It does not silently represent both source demographics and recipient-known identity. The package-level source patient extension and applicable patient identity rules must be finalized before implementation.
+
+References use Bundle entry fullUrl values. For example, List.entry.item.reference identifies the Task DocumentReference; that DocumentReference.content.attachment.url identifies the native Task resource. There is one actual Task and one metadata description of it. The List’s metadata references identify supporting resources without creating additional List memberships.
+
+Each additional Provenance Collection Bundle adds one outer Bundle entry, one DocumentReference, and one List membership, corresponding to one XD file, DocumentEntry, and membership. Its 1..\* Provenance resources are entries of that nested Bundle. A separately submitted Source Form PDF similarly adds a Binary, DocumentReference, and membership; a Source Form embedded in a CDA does not automatically become a separate submitted object.
+
+### Supporting resources and consistent packaging rules
+
+Being carried in the Bundle does not automatically mean being indexed by the List. The List indexes submitted information objects. Patient, Organization, Practitioner, PractitionerRole, Endpoint, and other resources may be present to support patient, author, requester, recipient, and provenance references. Supporting resources do not receive DocumentReferences merely because they are needed to interpret those references. If a resource is itself submitted as an information object, it receives a DocumentReference and List membership. In the example, List.subject references entry 12, List.source.reference references entry 14, and ihe-authorOrg on List.source references entry 13. List dt-intendedRecipient references entry 15; the Task Information Recipient input references the same entry.
+
+FHIR information objects and their supporting resources SHALL be carried as Bundle entries. Contained resources, inline DocumentReference attachment.data, and external payload locators SHALL NOT be used in this FHIR packaging pattern. Exactly one Workflow Activity Task is carried. In TX8, the primary information object is a separate minimal identification snapshot of the originating SubmissionSet/List; the reporting Task is not that primary object.
+
+The exclusion of contained resources applies to FHIR Collection packaging. In XD, Task supporting native FHIR resources SHALL be contained in the Task and referenced using \#\<id\> within the same root resource. Supporting resources for Provenance assertions SHALL be carried in their own Provenance Collection Bundle. A reference SHALL NOT point into another file’s contained resources. File locators identify packaged files; a locator for non-FHIR content is not a FHIR literal resource reference.
+
+Contained XD resources SHALL obey FHIR R4 containment constraints: no nested containment and no meta.versionId, meta.lastUpdated, or meta.security. Clinical identifiers and required values SHALL be preserved; applicable security labels SHALL be carried by the containing resource. Source version/timestamp details may be retained in an accompanying review report, which does not replace required transmitted information.
+
+### DirectTrust intended recipient extension
+
+MAP SHALL use dt-intendedRecipient on the current SubmissionSet List. Its canonical URL is http://objects.directtrust.org/standards/fhir/StructureDefinition/dt-intendedRecipient. Implementers SHALL use the applicable published StructureDefinition and its stated permitted targets.
+
+Each extension occurrence SHALL carry one valueReference targeting Organization, PractitionerRole, or Practitioner. Use Organization for an organization-level recipient. Use PractitionerRole when the intended recipient is a provider acting for a receiving organization in a particular role; PractitionerRole references the provider Practitioner and receiving Organization, and may reference the selected Direct Endpoint.
+
+Use of Practitioner with no relationship to an Organization and the practitioner’s role is STRONGLY NOT RECOMMENDED. PractitionerRole is the recommended representation for the mother’s OB at the receiving practice in TX3. This recommendation does not make Practitioner an invalid target; it makes the missing organization and role context explicit.
+
+The List dt-intendedRecipient extension and Task Information Recipient input SHALL identify the same recipient. In Figure D.1, both reference entry 15. This is a metadata reference, not List membership. The Routing Target is the selected transport endpoint and SHALL NOT replace the Information Recipient identity or confer authority to accept or reject the structured payload.
+
+This DirectTrust extension follows the purpose of IHE ihe-intendedRecipient but has a different permitted target set. The IHE extension does not permit PractitionerRole. MAP therefore uses the DirectTrust canonical and SHALL NOT label its PractitionerRole reference as ihe-intendedRecipient. Other adopted IHE mappings remain as documented.
+
+## Bundle Requirements
+
+The outer Bundle provides the container and resource identities. The following requirements govern its representation independently of the information objects it carries.
+
+| **FHIR element** | **Requirement** | **MAP meaning** |
+|----|----|----|
+| Bundle.type | SHALL be collection | Identifies this as a flexible collection rather than a FHIR transaction or document Bundle. |
+| Bundle.identifier | SHOULD carry a globally unique package identifier | Provides a stable identifier for the FHIR package instance. |
+| Bundle.timestamp | SHOULD be populated | Identifies when the Bundle package was assembled. |
+| Bundle.entry | SHALL include exactly one current SubmissionSet List per workflow unit, all DocumentReferences, information objects, and required supporting resources | Carries the package metadata model and its described information objects. |
+| Bundle.entry.fullUrl | SHALL uniquely identify each entry within the Bundle | Internal package references SHALL resolve to these fullUrl values; urn:uuid values are recommended for generated resources. |
+
+## SubmissionSet → FHIR List Mapping
+
+The following crosswalk accounts for the Chapter 3 SubmissionSet inventory. Chapter 3 and the Transaction Definition govern conformance, cardinality, and terminology bindings. A pending mapping does not authorize omission of required semantics.
+
+| **XD metadata field** | **FHIR R4 representation** | **Population rule / disposition** |
+|----|----|----|
+| entryUUID | List.identifier \[entryUUID\] | Preserve metadata entry identity separately from List.entry.item links; use an appropriately typed Identifier. |
+| uniqueId | List.identifier \[uniqueId\] | Preserve Workflow Activity identity; OID values use urn:oid:\<OID\>. Match the designated Task identifier. |
+| sourceId | List.extension: ihe-sourceId | Exactly one List-level extension, https://profiles.ihe.net/ITI/MHD/StructureDefinition/ihe-sourceId; valueIdentifier.value = urn:oid:\<Organization OID\> of the current contributor. Never map to Patient.identifier.system. |
+| submissionTime | List.date | SubmissionSet creation time, preserving timezone/precision. Do not derive it from an unrelated clinical or message date. |
+| contentTypeCode | List.extension: ihe-designationType | https://profiles.ihe.net/ITI/MHD/StructureDefinition/ihe-designationType with valueCodeableConcept. List.code identifies submissionset instead. |
+| purpose | MAP List extension; definition pending | Preserve alignment with Task.code. Logical XD Slot urn:dt-org:dsm:map:purpose is established; final FHIR canonical/StructureDefinition remains to be established. Do not present prototype extension URLs as finalized. |
+| patientId | List.subject → Patient.identifier | Use the selected recipient/exchange-domain identifier; Identifier.system identifies its assigning domain, not SubmissionSet.sourceId. |
+| sourcePatientId | MAP package-level mapping; definition pending | Preserve source IDs and authorities in an explicitly identified source Patient representation. The List-level mapping and any MAP extension require a published definition; do not mix with List identifiers. |
+| sourcePatientInfo | MAP package-level mapping; definition pending | Retain source Patient demographics even when recipient patientId is known. Do not silently merge source and recipient identity perspectives; package-level binding remains to be profiled. |
+| referenceIdList | MAP Context mapping; definition pending | Preserve typed Context identifiers and Task consistency; do not use List.identifier as a generic context bucket. Final List-level extension/reference representation remains to be profiled. |
+| author | List.source | Exactly one MAP package author identifies the initiating Organization and optionally its author person. Use a permitted List.source target and ihe-authorOrg on List.source; Organization is not a direct List.source target. |
+| author.authorPerson | Referenced Practitioner/Patient identity | Preserve the known author subfield; do not invent missing values. |
+| author.authorInstitution | ihe-authorOrg on List.source | https://profiles.ihe.net/ITI/MHD/StructureDefinition/ihe-authorOrg on List.source, valueReference to Organization; distinct from the contributing source ihe-sourceId. |
+| author.authorRole | Referenced PractitionerRole / explicitly profiled role | Preserve the known subfield for the single MAP SubmissionSet author; do not invent missing values. MAP does not carry repeating package authors. Any additional role representation requiring a profile remains explicitly subject to that profile definition. |
+| author.authorSpecialty | Referenced PractitionerRole.specialty | Preserve the known subfield for the single MAP SubmissionSet author; do not invent missing values. MAP does not carry repeating package authors. Any additional role representation requiring a profile remains explicitly subject to that profile definition. |
+| author.authorTelecommunication | Referenced author telecom | Preserve the known author subfield; do not invent missing values. |
+| intendedRecipient | List.extension: dt-intendedRecipient | http://objects.directtrust.org/standards/fhir/StructureDefinition/dt-intendedRecipient; valueReference targets Organization, PractitionerRole, or Practitioner. Preserve message/Task recipient semantics and reference the same recipient identity as the Task Information Recipient input. Practitioner with no relationship to Organization and role is STRONGLY NOT RECOMMENDED. Endpoint is transport destination information, not the Information Recipient. |
+| title | List.title | Collection title. |
+| comments | List.note.text | Package comments. |
+| availabilityStatus | List.status | Approved maps to current; not Task status. |
+| homeCommunityId | List.extension: ihe-HomeCommunityId | https://profiles.ihe.net/ITI/MHD/StructureDefinition/ihe-HomeCommunityId with valueOid. |
+| limitedMetadata | Profile applicability / meta.profile | No Boolean copy is invented. Assert a profile only after meeting all its constraints; this MAP collection does not automatically claim an MHD submission profile. |
+
+IHE MHD extensions use their full canonical URLs shown in the mapping table. List.status SHALL be current for an approved SubmissionSet; List.mode SHALL be working; List.code SHALL contain system https://profiles.ihe.net/ITI/MHD/CodeSystem/MHDlistTypes and code submissionset. The collection classification belongs in ihe-designationType. List.entry.item SHALL reference each included DocumentReference; these membership links do not represent SubmissionSet.entryUUID.
+
+MAP SHALL carry exactly one SubmissionSet author, identifying the Organization initiating the Shared Activity and optionally a person acting for that Organization. The Content Creator SHALL isolate this package author from authors of individual submitted artifacts. List.source uses a permitted R4 target; ihe-authorOrg on List.source identifies the author Organization. List.source SHALL NOT directly reference Organization. The contributing Organization in ihe-sourceId remains a distinct role. Adoption of selected MHD mappings does not assert conformance to an MHD ITI-65 Bundle, which has different transaction constraints from this Collection Bundle.
+
+## DocumentEntry → FHIR DocumentReference Mapping
+
+Chapter T defines the conceptual terms: Document Type maps to DocumentReference.type, and the applicable broad Document Category maps to DocumentReference.category. Keep Document Template/Profile separate from these semantic classifications. Existing terminology bindings and cardinalities remain governed by Chapter 3.
+
+The following crosswalk accounts for the Chapter 3 DocumentEntry inventory. Chapter 3 and the Transaction Definition govern conformance, cardinality, and terminology bindings. A pending mapping does not authorize omission of required semantics.
+
+| **XD metadata field** | **FHIR R4 representation** | **Population rule / disposition** |
+|----|----|----|
+| entryUUID | DocumentReference.identifier \[entryUUID\] | Preserve entry identity with an appropriately typed Identifier; resource id/fullUrl enables internal links. |
+| uniqueId | DocumentReference.masterIdentifier | Artifact identity, distinct from package identity. Preserve assigning system/value and OID/UUID URI encoding. |
+| objectType | No direct field for XD objectType | MAP packaged files are stable artifacts. No equivalent UUID-valued field is invented. |
+| mimeType | content.attachment.contentType | Actual IANA media type. Primary and secondary CDA SHALL use application/cda+xml, also on the corresponding Binary. Apply Chapter 3’s CDA media-type requirement. |
+| URI | content.attachment.url | Resolve to the Bundle entry fullUrl of the native FHIR payload or Binary. Do not use inline attachment.data, an unresolved XDM file path, or an external payload locator. |
+| hash | content.attachment.hash | Base64 encode the SHA-1 digest bytes; do not copy hexadecimal text as the FHIR value. |
+| size | content.attachment.size | Byte count of the described content. |
+| title | content.attachment.title | FHIR R4 DocumentReference has no top-level title. Keep comments separately in description. |
+| comments | DocumentReference.description | Comments about the artifact. |
+| classCode | DocumentReference.category | Preserve coded classification and terminology system. For clinical documents, apply the declared Document Category mapping in Chapter T. |
+| typeCode | DocumentReference.type | Required specific information-object classification; use the defined standard or expressly permitted temporary code. Never omit typeCode. For clinical documents, this is Document Type. |
+| formatCode | content.format | Preserve established format Coding; omit when unknown. |
+| confidentialityCode | DocumentReference.securityLabel | Preserve all applicable coded labels. |
+| languageCode | content.attachment.language | Preserve language tag. |
+| creationTime | content.attachment.creation | CDA: version-appropriate Assembler/Composer time; effectiveTime fallback. HL7 V2: MSH-7. Preserve the source instant and precision. DocumentReference.date is metadata reference creation time. |
+| serviceStartTime | context.period.start | Preserve service start. |
+| serviceStopTime | context.period.end | Preserve service end. |
+| eventCodeList | context.event | Preserve clinical event codes. |
+| healthcareFacilityTypeCode | context.facilityType | Preserve facility type. |
+| practiceSettingCode | context.practiceSetting | Preserve practice setting. |
+| patientId | DocumentReference.subject → Patient.identifier | Recipient/exchange patient identity. |
+| sourcePatientId | context.sourcePatientInfo.identifier | Source patient Identifier with its assigning system; do not use DocumentReference.identifier. |
+| sourcePatientInfo | context.sourcePatientInfo → Patient | Reference the source Patient demographics included in the Bundle; may share a Patient resource only when identity perspectives remain explicit and accurate. |
+| referenceIdList | context.related; context.encounter when applicable | Use Reference.identifier with preserved identifier type/system/value for established Contexts. Encounter references may use context.encounter; do not put Context IDs in the artifact identifier list. |
+| author | DocumentReference.author | Reference actual artifact author(s), distinct from package source. |
+| author.authorPerson | Referenced Practitioner/Patient identity | Preserve the known author subfield; do not invent missing values. |
+| author.authorInstitution | Author Organization / PractitionerRole.organization | Preserve the known author subfield; do not invent missing values. |
+| author.authorRole | Referenced PractitionerRole / explicitly profiled role | Preserve the known author subfield; do not invent missing values. |
+| author.authorSpecialty | Referenced PractitionerRole.specialty | Preserve the known author subfield; do not invent missing values. |
+| author.authorTelecommunication | Referenced author telecom | Preserve the known author subfield; do not invent missing values. |
+| legalAuthenticator | DocumentReference.authenticator | Identified legal authenticator; preserve actual attestation semantics. |
+| availabilityStatus | DocumentReference.status | Approved → current; Deprecated → superseded. Not clinical docStatus or Task status. |
+| homeCommunityId | DocumentReference.extension: ihe-HomeCommunityId | https://profiles.ihe.net/ITI/MHD/StructureDefinition/ihe-HomeCommunityId with valueOid. |
+| repositoryUniqueId | Retrieval URL semantics; no standalone R4 field | Repository identity contributes to an established retrieval URL where applicable. Do not invent a repository for embedded content; a lossless separate OID requires an explicitly defined mapping. |
+| limitedMetadata | Profile applicability / meta.profile | No Boolean copy. Assert only profiles whose complete requirements are satisfied. |
+
+DocumentReference.status is required in FHIR R4; use current for a newly packaged available artifact. DocumentReference.content SHALL describe the available content. DocumentReference.date, when populated, is the reference creation time. Artifact creation remains Attachment.creation. Date/time conversion SHALL preserve the instant and source precision; the IHE XD DTM representation is UTC.
+
+For CDA documents, DocumentEntry.creationTime SHOULD use the time of the version-appropriate Assembler or Composer participant identifying creation of the exchanged representation. If that participant or its time is absent, ClinicalDocument/effectiveTime SHALL supply the fallback when available. Do not invent a missing time or replace it with transaction time. Preserve ClinicalDocument/effectiveTime and its source meaning in the document. Encounter start and completion SHALL map separately to serviceStartTime and serviceStopTime when supplied. This MAP population rule explicitly qualifies the usual ClinicalDocument/effectiveTime-to-creationTime crosswalk; the derivation SHALL identify which source was used.
+
+For HL7 V2 notifications, DocumentEntry.creationTime SHALL use MSH-7 message creation time. serviceStartTime and serviceStopTime SHALL use source-supported PV1-44 and PV1-45, respectively. EVN-2 SHALL be identified as event recorded time; EVN-6, when supplied, SHALL be identified as actual event occurrence time. Missing EVN-6 SHALL remain unavailable, and disagreements with visit boundaries SHALL be surfaced without silent substitution. Preserve source precision and timezone meaning. Event occurrence has no separate standard DocumentEntry timestamp field; do not misuse eventCodeList as a timestamp.
+
+DocumentReference.docStatus reports the referenced document’s clinical status. It is independent of DocumentReference.status, which describes the metadata reference. Appendix E supplies the CDA/FHIR status crosswalk and R4 backport guidance. Preserve a known status without inferring it from availability, authentication alone, or TX8 acceptance. These R4 status extensions do not require adoption of FHIR R5 packaging.
+
+## Representing the Payload Objects
+
+Every information object described by a DocumentReference SHALL be carried within the received Collection Bundle as a separate native FHIR resource entry or Binary entry.
+
+The Workflow Activity Task SHALL be a native FHIR resource entry. Each Provenance information object SHALL be a separate native Bundle entry with Bundle.type = collection and 1..\* Provenance resources in its own entries. Every independently submitted information object SHALL have its own DocumentReference and current SubmissionSet List membership.
+
+Supporting Patient, Organization, PractitionerRole, Practitioner, and Endpoint resources SHALL be separate entries without DocumentReferences or membership unless independently submitted as information objects. TX8 carries its report Task, originating-package identification snapshot, and required outcome Provenance Collection Bundle as distinct information objects, each with its own DocumentReference and membership.
+
+Each non-FHIR file (for example CDA XML, HL7 V2, PDF, text, HTML, spreadsheet, image, audio, or video) SHALL be carried in a separate Binary Bundle entry. Binary.contentType SHALL identify its media type; Binary.data SHALL preserve the original file bytes using the FHIR base64Binary encoding.
+
+CDA media type. When the payload is a CDA document, DocumentReference.content.attachment.contentType and the referenced Binary.contentType SHALL both be application/cda+xml, consistent with DocumentEntry.mimeType and the common requirement in Chapter 3’s CDA media-type requirements. This applies to primary and secondary CDA documents. Binary.data SHALL preserve the original CDA XML bytes; choosing FHIR JSON or FHIR XML does not change the CDA media type or convert the document into a native FHIR resource.
+
+IANA registration: https://www.iana.org/assignments/media-types/application/cda+xml. The registered subtype is cda+xml.
+
+The List SHALL reference the DocumentReference Resources, not the information objects directly. The DocumentReference is the metadata description of the object; the object remains the payload content.
+
+The payload-appropriate human-readable information generated for the transaction SHALL be treated as package content in its own right and SHALL be represented consistently with the Transaction Definition. When both text/plain and text/html forms are generated, they convey the same essential human-readable information for Content Consumers with different presentation capabilities.
+
+## Provenance Collection Bundles and Target Resolution
+
+Each independently attributable Provenance information object SHALL be a Collection Bundle containing 1..\* Provenance resources. A structured payload permits 0..\* such objects subject to the Transaction Definition. Each receives its own DocumentEntry or DocumentReference and membership. Use DT-20261011-1, Provenance Information, from DTTemporaryCodeCS for its required classification. An intermediary may add its own bundle without modifying another actor’s assertions.
+
+Each shared target information object SHALL be carried in the same structured payload. A nested Bundle does not automatically search an enclosing Bundle. For cross-bundle targets, MAP SHALL use Provenance.target.identifier to identify the carried information object. Match its Identifier.system and value against the corresponding DocumentEntry.uniqueId or DocumentReference.masterIdentifier. Require exactly one matching information object; zero or multiple matches are defects. Do not resolve a target against an unrelated supporting resource.
+
+For an OID uniqueId, use identifier.system = urn:ietf:rfc:3986 and identifier.value = urn:oid:\<OID\>. Preserve other established assigning systems and values without guessing. Omit target.reference for these logical targets. Use Reference.type only when it accurately identifies the target FHIR resource; do not label a non-FHIR CDA or XD XML extract as a FHIR resource. These are explicit MAP resolution rules, not automatic FHIR nested-Bundle behavior.
+
+An assertion about a particular version SHALL identify the uniqueId of the carried version, not merely a setId or other version-family identifier. The Sender Actor SHALL ensure that the matched content is the version asserted. When the available identifier cannot distinguish the intended version, an applicable transaction-specific version rule is required before the assertion can be exchanged unambiguously.
+
+Agents and other supporting references within a Provenance Collection Bundle SHALL resolve to entries in that bundle. In XD it is one packaged FHIR file; its target is matched to the uniqueId of another carried information object using the same logical rule. This avoids external retrieval and cross-file containment. Additional provenance available at finalization may be shared where permitted; later activities may be communicated in subsequent transactions.
+
+## TX8 Originating Package Identification Snapshot
+
+TX8 has its own current SubmissionSet/List and Workflow Activity Task. Its primary information object SHALL be a minimal identification snapshot of the originating SubmissionSet/List. The snapshot identifies the whole structured payload whose workflow status is reported; it is not a second active index and does not retransmit the original information objects.
+
+The snapshot SHALL preserve original uniqueId, sourceId, submissionTime, and purpose. It MAY preserve entryUUID and title; retain Context identifiers when required for correlation. Omit original membership and patient, author, and intended-recipient resource references. TX8’s own metadata remains subject to its independent requirements.
+
+In FHIR, carry the snapshot as a separate List entry described by a DocumentReference and indexed by TX8’s current List. Use List.status = current and List.mode = snapshot; these identify the extract and do not convey acceptance or rejection. List.entry SHALL be absent. Its narrative SHALL state that original membership was intentionally omitted. Preserve the original business identifier separately from the snapshot resource id and fullUrl. The dedicated MAP snapshot profile SHALL constrain this use; do not assert an MHD SubmissionSet profile on this incomplete identification extract.
+
+In XD, carry the same minimal FHIR R4 List identification snapshot serialized as application/fhir+xml in a separate packaged file, described by its own DocumentEntry and linked from TX8’s report SubmissionSet. Use List.status=current, List.mode=snapshot, no List.entry, and the preserved originating business identifier, sourceId, submissionTime, purpose, and applicable typed Context identifiers. Classify the information object as List using http://hl7.org/fhir/resource-types (XD OID 2.16.840.1.113883.4.642.4.2). It is not a second active SubmissionSet in METADATA.XML. Reference.type=List accurately identifies this FHIR XML target.
+
+TX8 accept or reject Provenance SHALL target the snapshot through the original uniqueId using Reference.identifier. For OIDs, use the URI encoding stated above. Require exactly one carried snapshot match; omit target.reference. The target is not the report SubmissionSet, reporting Task, or original Task. Task.status = completed reports original structured payload acceptance; failed reports rejection. Sufficient receipt is implied; separate receive provenance is not required.
+
+## FHIR XML and FHIR JSON Serialization
+
+| **Packaging choice** | **Media type** | **Requirement** |
+|----|----|----|
+| FHIR XML Collection Bundle | application/fhir+xml | Serialize the complete Collection Bundle using FHIR XML rules. |
+| FHIR JSON Collection Bundle | application/fhir+json | Serialize the same logical Collection Bundle using FHIR JSON rules. |
+
+**Interoperability rule.** A transaction definition that permits both serializations SHALL define them as equivalent packaging alternatives. Resource identities, coded metadata, references, attachment media types, and payload semantics SHALL not change merely because XML or JSON serialization is selected.
+
+All native FHIR resources in a generated package SHALL use the selected application/fhir+json or application/fhir+xml representation consistently, including submitted XD FHIR resource files and their contained resources. In the FHIR option the complete Collection Bundle uses that serialization. Binary.data SHALL preserve original non-FHIR artifact bytes and their original media types; selecting FHIR XML or JSON does not convert CDA, HL7 V2, TXT, HTML, PDF, or other non-FHIR content.
+
+## Maternal Health – Birth Transaction Application
+
+For a transaction in cc-maternal-health-birth, the Transaction Definition remains the authoritative source for which information objects are required and how they are classified. The FHIR packaging alternative changes the metadata container, not the transaction intent. Accordingly:
+
+The List.code SHALL identify submissionset. The List-level ihe-designationType extension SHALL carry the transaction-defined collection classification corresponding to SubmissionSet.contentTypeCode.
+
+Each DocumentReference.category SHALL carry the broad class/role corresponding to DocumentEntry.classCode when that classification is required.
+
+Each DocumentReference.type SHALL carry the specific information classification corresponding to DocumentEntry.typeCode when that classification is required.
+
+The FHIR Task Workflow Module, when required by the Transaction Definition, remains the same logical workflow artifact. Its MAP transaction code remains Task.code; it is not replaced by DocumentReference.type.
+
+Patient, author/provenance, service-period, facility, confidentiality, and identifier semantics SHALL be preserved when moving between XD and FHIR packaging.
+
+## Grouped Sender Actor Processing Rules
+
+The grouped Sender Actor constructs and validates the structured payload. Creation and packaging responsibilities MAY be divided between Content Creator and Message Sender according to the implementation. Apply the following steps:
+
+1\. Read the Transaction Definition and determine whether FHIR Collection packaging is permitted and which serializations are supported.
+
+2\. Construct one logical package metadata model from the transaction, Task, patient/context data, information objects, and endpoint/recipient information.
+
+3\. Create the List from the package-level metadata that would populate the XD SubmissionSet.
+
+4\. Create one DocumentReference for each information object that would receive an XD DocumentEntry.
+
+5\. Populate List.entry.item references to those DocumentReferences.
+
+6\. Include the actual payload resources/content required by the transaction and preserve their identifiers and media types.
+
+7\. Generate payload-appropriate human-readable information in both .txt and .html forms when required by the Transaction Definition and represent those outputs as package content.
+
+8\. Validate that every List entry resolves, every DocumentReference describes an available payload object, and every supporting resource reference resolves within the transmitted package. Check identifiers, coded classifications, selected source/recipient identity perspectives, and the transaction requirements. Compare XD and FHIR representations for equivalent information and verify that each required TXT and supplied HTML copy is identical to its corresponding MIME Part 1 file. Separately provided review files cannot resolve required package references.
+
+9\. Serialize the same logical Collection Bundle as FHIR XML or FHIR JSON according to the selected packaging option.
+
+## Grouped Receiver Actor Processing Expectations
+
+The grouped Receiver Actor SHALL parse the permitted FHIR serialization and identify the outer Bundle as type collection. The Content Consumer evaluates the structured payload for acceptance or rejection into the intended workflow; transport delivery alone does not establish either.
+
+The Content Consumer SHALL process the List as the package-level index/metadata resource and follow its entries to the DocumentReference Resources.
+
+The Content Consumer SHALL use the DocumentReference metadata to identify and process the associated information objects according to the Transaction Definition.
+
+The Content Consumer SHALL resolve supporting references from resources in the received Collection Bundle and SHALL NOT depend on a separately supplied support folder or review report. An unresolved reference required for processing is a package defect; any resulting TX8 failure SHALL apply the shared coded failure-reason requirements in Chapter 3’s workflow status requirements.
+
+The Content Consumer SHALL NOT assume that a received Collection Bundle is directly postable as a FHIR transaction. Consistent with Framework §7.3, a derivative IG may require the Content Consumer to transform the Collection Bundle into a Transaction Bundle or another locally appropriate processing form.
+
+## Mapping Issues Requiring Deliberate Constraint
+
+MAP package-level source patient information, Context identifiers, and Shared Activity purpose still require finalized FHIR profiles/StructureDefinitions. The XD URNs are established in Chapter 3; they do not automatically define FHIR extension canonical URLs. Prototype-only extension URLs SHALL NOT be described as finalized mappings.
+
+MAP constrains SubmissionSet authors to one initiating author Organization, optionally identifying a person acting for that Organization. This resolves the plural-author representation issue for MAP packages; artifact authors remain governed by their DocumentReference metadata. Patient and Context References SHALL preserve identity perspectives; no patient ID is placed in a document identifier list.
+
+This appendix adopts the IHE sourceId, designationType, homeCommunityId, and authorOrg mappings. Intended recipient uses the DirectTrust dt-intendedRecipient extension, permitting Organization, PractitionerRole, or Practitioner. Bundle type collection remains the MAP packaging choice; this does not claim an MHD Provide Document Bundle profile.
+
+MAP adopts one packaging pattern: all package resources SHALL be carried as Bundle entries; contained resources SHALL NOT be used. Each DocumentReference.content.attachment.url SHALL resolve to the fullUrl of the included native FHIR payload resource or Binary. Inline DocumentReference attachment.data and external payload locators SHALL NOT be used. Supporting resources needed by the package SHALL also be carried as Bundle entries.
+
+When a known repositoryUniqueId must be preserved separately from its retrieval URL, an explicit additional mapping remains to be defined. Every inventory field has a mapping or an explained disposition; a pending disposition is not permission to discard required semantics.
+
+References: https://profiles.ihe.net/ITI/MHD/StructureDefinition-IHE.MHD.Minimal.SubmissionSet-mappings.html ; https://profiles.ihe.net/ITI/MHD/StructureDefinition-IHE.MHD.Comprehensive.DocumentReference-mappings.html ; https://hl7.org/fhir/R4/list.html ; https://hl7.org/fhir/R4/documentreference-definitions.html .
+
+## Conformance Summary
+
+FHIR packaging preserves the transaction semantics established by Chapter 3. The outer Collection Bundle carries the structured payload; its current SubmissionSet List organizes the submitted information objects; DocumentReferences describe them; and native resource or Binary entries carry their content. Supporting entries resolve identities without automatically becoming submitted objects. Acceptance or rejection applies to the whole structured payload and does not establish completion of subsequent processing.

@@ -1,0 +1,320 @@
+[
+  {
+    "text": "About this Guide",
+    "link": "/00-about-this-document/",
+    "collapsed": true,
+    "items": [
+      {
+        "text": "0.2 What This Guide Defines and Reuses",
+        "link": "/00-about-this-document/0-2-what-this-guide-defines-and-reuses"
+      },
+      {
+        "text": "0.3 How to Use This Guide",
+        "link": "/00-about-this-document/0-3-how-to-use-this-guide"
+      }
+    ]
+  },
+  {
+    "text": "Use Case Overview",
+    "link": "/01-use-case-overview/",
+    "collapsed": true,
+    "items": [
+      {
+        "text": "1.2 Information Exchange Objectives",
+        "link": "/01-use-case-overview/1-2-information-exchange-objectives"
+      },
+      {
+        "text": "1.3 Technical Feasibility and Scope",
+        "link": "/01-use-case-overview/1-3-technical-feasibility-and-scope"
+      },
+      {
+        "text": "1.4 Approach Principles",
+        "link": "/01-use-case-overview/1-4-approach-principles"
+      }
+    ]
+  },
+  {
+    "text": "Actors and Transactions",
+    "link": "/02-map-use-case-framework/",
+    "collapsed": true,
+    "items": [
+      {
+        "text": "2.2 Transaction Participants and Participation Roles",
+        "link": "/02-map-use-case-framework/2-2-transaction-participants-and-participation-roles"
+      },
+      {
+        "text": "2.3 Technology Components Supporting Transactions",
+        "link": "/02-map-use-case-framework/2-3-technology-components-supporting-transactions"
+      },
+      {
+        "text": "2.4 Reusable Transaction Catalog",
+        "link": "/02-map-use-case-framework/2-4-reusable-transaction-catalog"
+      },
+      {
+        "text": "2.5 Objective-to-Transaction Matrix",
+        "link": "/02-map-use-case-framework/2-5-objective-to-transaction-matrix"
+      },
+      {
+        "text": "2.6 Actor Transaction Diagrams",
+        "link": "/02-map-use-case-framework/2-6-actor-transaction-diagrams"
+      }
+    ]
+  },
+  {
+    "text": "Transaction Framework",
+    "link": "/03-01-map-transaction-framework/",
+    "collapsed": true,
+    "items": [
+      {
+        "text": "3.2 Transaction Model and Identifiers",
+        "link": "/03-01-map-transaction-framework/3-2-transaction-model-and-identifiers"
+      },
+      {
+        "text": "3.3 Technical Actor Roles and Accountability",
+        "link": "/03-01-map-transaction-framework/3-3-technical-actor-roles-and-accountability"
+      },
+      {
+        "text": "3.4 Transaction Processing Lifecycle and the Message to Payload Handoff",
+        "link": "/03-01-map-transaction-framework/3-4-transaction-processing-lifecycle-and-the-message-to-payload-handoff"
+      },
+      {
+        "text": "3.5 Workflow Unit and Structured Payload Architecture",
+        "link": "/03-01-map-transaction-framework/3-5-workflow-unit-and-structured-payload-architecture"
+      },
+      {
+        "text": "3.6 Patient Identity Context and Information Classification",
+        "link": "/03-01-map-transaction-framework/3-6-patient-identity-context-and-information-classification"
+      },
+      {
+        "text": "3.7 XD Metadata Requirements and Terminology Bindings",
+        "link": "/03-01-map-transaction-framework/3-7-xd-metadata-requirements-and-terminology-bindings"
+      },
+      {
+        "text": "3.8 Message and Transport Requirements",
+        "link": "/03-01-map-transaction-framework/3-8-message-and-transport-requirements"
+      },
+      {
+        "text": "3.9 Workflow Status and Processing Anomalies",
+        "link": "/03-01-map-transaction-framework/3-9-workflow-status-and-processing-anomalies"
+      },
+      {
+        "text": "3.10 Provenance Across the Transaction Lifecycle",
+        "link": "/03-01-map-transaction-framework/3-10-provenance-across-the-transaction-lifecycle"
+      },
+      {
+        "text": "3.11 Putting the Framework Together",
+        "link": "/03-01-map-transaction-framework/3-11-putting-the-framework-together"
+      }
+    ]
+  },
+  {
+    "text": "Transaction Definitions",
+    "link": "/03-02-map-transaction-definitions/",
+    "collapsed": true,
+    "items": [
+      {
+        "text": "TX1: send-outpatient-visit-notification",
+        "link": "/03-02-map-transaction-definitions/tx1-send-outpatient-visit-notification"
+      },
+      {
+        "text": "TX2: send-admission-notification",
+        "link": "/03-02-map-transaction-definitions/tx2-send-admission-notification"
+      },
+      {
+        "text": "TX3: send-birth-notification",
+        "link": "/03-02-map-transaction-definitions/tx3-send-birth-notification"
+      },
+      {
+        "text": "TX4: send-discharge-notification",
+        "link": "/03-02-map-transaction-definitions/tx4-send-discharge-notification"
+      },
+      {
+        "text": "TX5: send-documents",
+        "link": "/03-02-map-transaction-definitions/tx5-send-documents"
+      },
+      {
+        "text": "TX6: query-for-documents",
+        "link": "/03-02-map-transaction-definitions/tx6-query-for-documents"
+      },
+      {
+        "text": "TX7: send-patient-update",
+        "link": "/03-02-map-transaction-definitions/tx7-send-patient-update"
+      },
+      {
+        "text": "TX8: send-workflow-status",
+        "link": "/03-02-map-transaction-definitions/tx8-send-workflow-status"
+      }
+    ]
+  },
+  {
+    "text": "Endpoint Capability Statement",
+    "link": "/04-endpoint-capability-statement/",
+    "collapsed": true,
+    "items": [
+      {
+        "text": "4.2 MAP Endpoint CapabilityStatement Profile",
+        "link": "/04-endpoint-capability-statement/4-2-map-endpoint-capabilitystatement-profile"
+      },
+      {
+        "text": "4.3 Endpoint and Organization Identification",
+        "link": "/04-endpoint-capability-statement/4-3-endpoint-and-organization-identification"
+      },
+      {
+        "text": "4.4 Supported Use Cases",
+        "link": "/04-endpoint-capability-statement/4-4-supported-use-cases"
+      },
+      {
+        "text": "4.5 Transaction Capabilities and Technical Actor Roles",
+        "link": "/04-endpoint-capability-statement/4-5-transaction-capabilities-and-technical-actor-roles"
+      },
+      {
+        "text": "4.6 Structured Payload Metadata Representation Capabilities",
+        "link": "/04-endpoint-capability-statement/4-6-structured-payload-metadata-representation-capabilities"
+      },
+      {
+        "text": "4.7 Metadata Representation Selection",
+        "link": "/04-endpoint-capability-statement/4-7-metadata-representation-selection"
+      },
+      {
+        "text": "4.8 Information Object and Human-Readable Communication Capabilities",
+        "link": "/04-endpoint-capability-statement/4-8-information-object-and-human-readable-communication-capabilities"
+      },
+      {
+        "text": "4.9 Direct Message Delivery and Structured Payload Workflow Status",
+        "link": "/04-endpoint-capability-statement/4-9-direct-message-delivery-and-structured-payload-workflow-status"
+      },
+      {
+        "text": "4.10 TX8 Workflow Status Capability",
+        "link": "/04-endpoint-capability-statement/4-10-tx8-workflow-status-capability"
+      },
+      {
+        "text": "4.11 Identifier Capabilities",
+        "link": "/04-endpoint-capability-statement/4-11-identifier-capabilities"
+      },
+      {
+        "text": "4.12 Terminology Capabilities",
+        "link": "/04-endpoint-capability-statement/4-12-terminology-capabilities"
+      },
+      {
+        "text": "4.13 Intended Workflow",
+        "link": "/04-endpoint-capability-statement/4-13-intended-workflow"
+      },
+      {
+        "text": "4.14 Endpoint Discovery and Capability Resolution",
+        "link": "/04-endpoint-capability-statement/4-14-endpoint-discovery-and-capability-resolution"
+      },
+      {
+        "text": "4.15 Testing and Operational Support",
+        "link": "/04-endpoint-capability-statement/4-15-testing-and-operational-support"
+      }
+    ]
+  },
+  {
+    "text": "Implementation Guidance",
+    "link": "/05-implementation-guidance/",
+    "collapsed": true,
+    "items": [
+      {
+        "text": "5.2 Normative Boundary",
+        "link": "/05-implementation-guidance/5-2-normative-boundary"
+      },
+      {
+        "text": "5.3 Progressive Structuring and Narrative Interoperability",
+        "link": "/05-implementation-guidance/5-3-progressive-structuring-and-narrative-interoperability"
+      },
+      {
+        "text": "5.4 Implementation Roadmap",
+        "link": "/05-implementation-guidance/5-4-implementation-roadmap"
+      },
+      {
+        "text": "5.5 Implementing a Reusable Transaction",
+        "link": "/05-implementation-guidance/5-5-implementing-a-reusable-transaction"
+      },
+      {
+        "text": "5.6 Endpoint Capability and Representation Selection",
+        "link": "/05-implementation-guidance/5-6-endpoint-capability-and-representation-selection"
+      },
+      {
+        "text": "5.7 AI-Assisted and Autonomous Implementation Considerations",
+        "link": "/05-implementation-guidance/5-7-ai-assisted-and-autonomous-implementation-considerations"
+      },
+      {
+        "text": "5.8 Conformance and Testing",
+        "link": "/05-implementation-guidance/5-8-conformance-and-testing"
+      },
+      {
+        "text": "5.9 Implementation Artifacts, Examples, and Tools",
+        "link": "/05-implementation-guidance/5-9-implementation-artifacts-examples-and-tools"
+      },
+      {
+        "text": "5.10 Implementation Checklist",
+        "link": "/05-implementation-guidance/5-10-implementation-checklist"
+      },
+      {
+        "text": "5.11 Where to Go Next",
+        "link": "/05-implementation-guidance/5-11-where-to-go-next"
+      }
+    ]
+  },
+  {
+    "text": "Terms",
+    "link": "/06-terms/",
+    "collapsed": true,
+    "items": [
+      {
+        "text": "T.2 Document Terminology",
+        "link": "/06-terms/t-2-document-terminology"
+      },
+      {
+        "text": "T.3 Workflow Transaction and Routing Terminology",
+        "link": "/06-terms/t-3-workflow-transaction-and-routing-terminology"
+      },
+      {
+        "text": "T.4 Supporting Guidance",
+        "link": "/06-terms/t-4-supporting-guidance"
+      }
+    ]
+  },
+  {
+    "text": "Appendices",
+    "link": "/07-appendices/",
+    "collapsed": true,
+    "items": [
+      {
+        "text": "Appendix A: Understanding Standardized Clinical Documents",
+        "link": "/07-appendices/appendix-a-understanding-standardized-clinical-documents"
+      },
+      {
+        "text": "Appendix B: Understanding Identity Context and Status",
+        "link": "/07-appendices/appendix-b-understanding-identity-context-and-status"
+      },
+      {
+        "text": "Appendix C: Understanding XD Classification Metadata",
+        "link": "/07-appendices/appendix-c-understanding-xd-classification-metadata"
+      },
+      {
+        "text": "Appendix D: FHIR Collection Bundle Packaging",
+        "link": "/07-appendices/appendix-d-fhir-collection-bundle-packaging"
+      },
+      {
+        "text": "Appendix E: Understanding Document Lifecycle and Status",
+        "link": "/07-appendices/appendix-e-understanding-document-lifecycle-and-status"
+      }
+    ]
+  },
+  {
+    "text": "References",
+    "link": "/08-references/",
+    "collapsed": true
+  },
+  {
+    "text": "Vocabulary",
+    "link": "/09-vocabulary/",
+    "collapsed": true
+  },
+  {
+    "text": "Examples",
+    "link": "/10-examples/",
+    "collapsed": true
+  }
+]

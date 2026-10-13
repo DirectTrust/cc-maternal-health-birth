@@ -1,0 +1,61 @@
+{
+  "_comment": "Layout manifest for the docx -> VitePress conversion (see scripts/build-ig.mjs and docs/CONVENTIONS.md). One entry per source subfolder, in sidebar order.",
+  "sourceDir": "~/Downloads/cc-maternal-health-birth_IG_20261013_V7",
+  "groups": [
+    { "folder": "00 About This Document", "title": "About this Guide", "kind": "chapter", "number": "0", "docx": "*Chapter0*" },
+    { "folder": "01 Use Case Overview", "title": "Use Case Overview", "kind": "chapter", "number": "1", "docx": "*Chapter1*", "merge": [{ "sections": [3, 5], "title": "Technical Feasibility and Scope" }] },
+    { "folder": "02 MAP Use Case Framework", "title": "Actors and Transactions", "kind": "chapter", "number": "2", "docx": "*Chapter2*" },
+    { "folder": "03-01 MAP Transaction Framework", "title": "Transaction Framework", "kind": "chapter", "number": "3", "docx": "*Chapter3*" },
+    {
+      "folder": "03-02 MAP Transaction Definitions",
+      "title": "Transaction Definitions",
+      "kind": "transactions",
+      "landing": "*_RTC_*",
+      "transactions": [
+        { "docx": "tx1-*", "label": "TX1" },
+        { "docx": "tx2-*", "label": "TX2" },
+        { "docx": "tx3-*", "label": "TX3" },
+        { "docx": "tx4-*", "label": "TX4" },
+        { "docx": "tx5-*", "label": "TX5" },
+        { "docx": "tx6-*", "label": "TX6" },
+        { "docx": "tx7-*", "label": "TX7" },
+        { "docx": "tx8-*", "label": "TX8" }
+      ]
+    },
+    {
+      "folder": "04 Endpoint Capability Statement",
+      "title": "Endpoint Capability Statement",
+      "kind": "chapter",
+      "number": "4",
+      "docx": "*Chapter4*",
+      "downloads": [
+        { "file": "CapabilityStatement-*.json", "label": "CapabilityStatement (JSON)" },
+        { "file": "CapabilityStatement-*.xml", "label": "CapabilityStatement (XML)" }
+      ]
+    },
+    { "folder": "05 Implementation Guidance", "title": "Implementation Guidance", "kind": "chapter", "number": "5", "docx": "*Chapter5*" },
+    { "folder": "06 Terms", "title": "Terms", "kind": "chapter", "number": "T", "docx": "*Terms-and-Definitions*" },
+    {
+      "folder": "07 Appendices",
+      "title": "Appendices",
+      "kind": "appendices",
+      "landing": "*_Appendices_*",
+      "appendices": [
+        { "docx": "*Appendix_A_*", "letter": "A" },
+        { "docx": "*Appendix_B_*", "letter": "B" },
+        { "docx": "*Appendix_C_*", "letter": "C" },
+        { "docx": "*Appendix_D_*", "letter": "D" },
+        { "docx": "*Appendix_E_*", "letter": "E" }
+      ]
+    },
+    { "folder": "08 References", "title": "References", "kind": "single", "docx": "*References*" },
+    {
+      "folder": "09 Vocabulary",
+      "title": "Vocabulary",
+      "kind": "single",
+      "docx": "*Vocabulary*",
+      "downloads": [{ "file": "*.zip", "label": "DirectTrust Terminology and Artifacts Package (zip)" }]
+    },
+    { "folder": "10 Examples", "title": "Examples", "kind": "single", "docx": "*Examples*" }
+  ]
+}

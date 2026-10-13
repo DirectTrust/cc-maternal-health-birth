@@ -1,0 +1,358 @@
+---
+title: "TX2: send-admission-notification"
+---
+
+# TX2: send-admission-notification
+
+## Transaction Overview — WHY
+
+The following provisions describe transaction overview.
+
+### Purpose and Scope
+
+send-admission-notification conveys an admission-related event notification in both human-readable and machine-processable form. The machine-processable Payload is an HL7 Version 2 notification. The human-readable communication provides the essential information about the patient and the event.
+
+The transaction supports the following admission-related events:
+
+> • patient registration;
+>
+> • hospital admission; and
+>
+> • emergency department admission.
+
+A Newborn Birth Admission A01 is processed as an admission notification for the newborn under TX2. For this maternal-health use case, it SHALL carry the mother’s established Perinatal Context Instance identifier and sufficient maternal-association information to support the separately identified TX3 send-birth-notification activity. Sections 2.2.2 and 7 define this prerequisite and the separation of processing outcomes.
+
+The Payload and Payload Metadata may be represented using XD or FHIR packaging as supported by the receiving endpoint. The representation changes how the same Payload Metadata is encoded; it does not create a different transaction.
+
+### Transaction Identity
+
+The canonical transaction code is send-admission-notification. TX2 is a local editorial label assigned by the cc-maternal-health-birth Use Case Guide for readability and navigation; it is not the interoperable transaction identifier. The canonical transaction code is intended to remain stable and reusable across use cases.
+
+### Framework Relationship
+
+Framework relationship. This Transaction Definition specializes the common Transaction Framework defined in Chapter 3, including the terminology bindings in Section 3.7.7. Common transport, Workflow Activity Task, Workflow Status, patient identity, Context/correlation, Provenance, and message-metadata requirements apply unless this definition states a TX2-specific requirement. TX3 send-birth-notification defines the separate maternal document activity that may follow a newborn Birth Admission A01.
+
+Clinical Content Author/Source, Workflow Requester / Information Source (Task.requester), SubmissionSet Source (SubmissionSet.sourceId), Transaction Sender, and Information Recipient are distinct roles. A single organization MAY fill several roles. Implementations SHALL preserve the distinction when different parties perform them.
+
+## Message and Payload Requirements — WHAT
+
+The following provisions describe message and payload requirements.
+
+### Payload Packaging Structure
+
+The TX2 Payload SHALL include the machine-processable HL7 Version 2 admission-related notification and a human-readable healthcare communication conveying the essential notification information. The human-readable communication MAY also be supplied as HTML.
+
+The Structured Payload Package SHALL contain exactly one Workflow Activity Task, exactly one primary HL7 Version 2 notification, identical copies of the required human-readable text/plain communication and every supplied text/html alternative, and optional Provenance describing the included objects or activity. Secondary clinical documents and other supplemental Payload objects SHALL NOT be included. Clinical documents SHALL be sent separately using TX5 send-documents. FHIR resources needed solely to represent metadata and referenced actors or patient information are supporting resources, not additional submitted Payload objects.
+
+Apply the common MIME packaging and human-readable content preservation requirements in Chapter 3 Section 3.8.4. The following tables identify the message-level components and the information objects required for TX2. Detailed common transport and ZIP MIME requirements are governed by Chapter 3.
+
+Apply Chapter 3 Sections 3.7.5–3.7.6 and Appendix D for package completeness. All required payload and supporting references SHALL resolve within the transmitted Structured Payload Package. Review reports and inspection views outside that package do not supply required transmitted resources. Supporting patient, actor and endpoint resources do not acquire additional DocumentEntries merely because they support a reference.
+
+For XD, Task supporting resources SHALL be contained in the Task with local fragment references. Provenance assertions and their agents SHALL reside in their own Provenance Collection Bundle. Do not reference another object’s contained resources or use nested containment. For FHIR metadata, Task support remains in the outer Collection Bundle; Provenance bundle entries remain inside their carrying bundle. Apply Chapter 3 and Appendix D for carried targets, security labels, and serialization.
+
+#### Message-Level Payload Packaging Structure
+
+| **Message MIME-part** | **Conf.** | **Package object** | **Content MIME type** |
+|----|----|----|----|
+| MIME Part 1 | R | Human-readable healthcare communication | text/plain |
+| MIME Part 1 | O | Human-readable alternative(s) | text/html |
+| MIME Part 2 | R | Structured Payload Package — XD or FHIR metadata option | application/zip |
+
+#### Structured Data Package Contents
+
+| **Conf.** | **Package object** | **Content MIME type / representation** | **Requirement** |
+|----|----|----|----|
+| R | XDM/FHIR SubmissionSet/List | Selected metadata representation | Package-level metadata; apply Chapter 3. |
+| R | XDM/FHIR DocumentEntries/DocumentReferences | Selected metadata representation | Metadata describing the included information objects. |
+| R | Workflow Activity Task Resource | application/fhir+xml or application/fhir+json | Exactly one Workflow Activity Task, as specified in Section 2.2; use the representation selected for the package. |
+| R | HL7 Version 2 Admission-Related Notification | text/hl7v2 | Primary information object for TX2; classify the specific event as specified in Section 7.1. Exactly one primary notification is permitted; secondary clinical documents and supplemental Payload objects SHALL NOT be included. |
+| O | Provenance Collection Bundle | application/fhir+xml or application/fhir+json | When included, use the representation selected for the package. Describes the included objects or activity; it does not authorize additional clinical documents. |
+| R | Human-readable healthcare communication | text/plain | Identical copy of the MIME Part 1 text/plain file; content coverage is specified in Section 2.3. |
+| C | Human-readable alternative(s) | text/html | Include identical copies of every HTML alternative supplied in MIME Part 1; HTML remains optional at message level. |
+
+### Workflow Activity Task
+
+Workflow Activity Task coding. In an initiating send-admission-notification exchange, Task.code SHALL carry the DTCodeSystem code send-admission-notification. Interpreted with the Task’s Use Case, this code selects this transaction specification; the Information Recipient functional requirements defined for this transaction are the requested processing activity. Task.code.text SHALL make the Task Action Precept explicit: “Process the information in the Payload in the intended workflow.”
+
+The TX2 package SHALL contain exactly one Workflow Activity Task in addition to the primary HL7 Version 2 notification. The Task requests processing of the admission-related notification under this Transaction Definition. The notification and Task are distinct information objects. TX8 carries a separate originating-package identification snapshot as its primary information object.
+
+| **Task concept** | **TX2 requirement** |
+|----|----|
+| Task.code | R. DTCodeSystem code send-admission-notification. |
+| Task action precept | R. Process the information in the Payload in the intended workflow. |
+| Task identifier / SubmissionSet.uniqueId | R. Same logical Workflow Activity identifier; apply Chapter 3. |
+| Task.for | RE as applicable. Patient identity consistent with the notification and package; do not invent an identifier. |
+| Context | Applicable established Context identifiers. For a newborn Birth Admission, the mother’s established Perinatal identifier is required as a related maternal Context, with namespace/type; Task.for remains the newborn. See Section 2.2.2. |
+| Whole-payload acceptance reporting request | R as a defined workflow instruction. State whether whole-payload acceptance reporting is requested. |
+| Workflow Status Update Endpoint(s) | At least one initiating endpoint; preserve accumulated endpoints as required by Chapter 3. |
+
+#### Workflow Activity Identification
+
+An intermediary updating package membership, Provenance, or Workflow Status Update Endpoints SHALL preserve the aligned SubmissionSet.uniqueId/List business identifier and Task.identifier. Updated representations receive new entryUUID/List.id and Task.id values; update membership and affected references. These updates do not create a new logical workflow activity or Transaction Instance.
+
+Task.identifier and SubmissionSet.uniqueId SHALL identify the same logical TX2 Workflow Activity. Task.code and SubmissionSet.purpose SHALL identify send-admission-notification; the specific admission-related event classification SHALL NOT replace the transaction code.
+
+#### Context Instance Association
+
+TX2 SHALL apply the common Context and correlation rules defined by Chapter 3. Applicable established Context Instance identifiers SHOULD be carried in the Payload Metadata when known and authorized for the exchange. For the maternal-health use case, an admission-related notification may be associated with the patient’s established Perinatal Context Instance and applicable Visit Context Instance.
+
+A newborn Birth Admission A01 SHALL carry the mother’s established Perinatal Context Instance identifier, including its assigning authority or namespace, as a related maternal Context identifier. Its type SHALL be urn:dt-org:dsm:map:2025:perinatal from the Chapter 3 DT Context Type ValueSet. The newborn remains the notification patient and Task.for subject; carrying the maternal Context identifier SHALL NOT assert that the newborn is the patient of the mother’s Perinatal episode. Distinguish maternal and newborn identifiers and Context associations in the source notification, Task, and package metadata.
+
+The hospital is assumed to have previously received the mother’s established Perinatal Context Instance identifier through the birth-registration workflow or a shared Antepartum Summary document. It SHALL retain the maternal association and carry that identifier forward into the newborn Birth Admission A01 and the applicable TX2 Context metadata/Task representation. This is a use-case content requirement; do not assume that every base HL7 V2 A01 supplies it without an agreed implementation mapping. Do not generate a replacement episode identifier, substitute the newborn’s encounter identifier, or silently relabel a Pregnancy Context identifier as Perinatal. Resolve any relationship to the established Perinatal Context through authoritative context information.
+
+The notification SHALL preserve source-supported mother–newborn association information and maternal identifiers with their assigning authorities. PID-21, Mother’s Identifier, is used when present in the selected HL7 V2 implementation; corroborating NK1 or other agreed source data MAY assist resolution but SHALL NOT replace the required established Perinatal identifier. The exact HL7 V2 field/extension mapping SHALL be established by the source implementation and preserved through transformation. The identifier does not encode a Direct address; authorized resolution of the maternal Context to the OB/practice and its preferred Direct endpoint is part of TX3 processing.
+
+HL7 V2 source mapping and status. Distinguish the visit/encounter identifier in PV1-19 from an established episode identifier. HL7 V2.8 defines PV1-54 Service Episode Identifier and PV1-53 Service Episode Description; those fields are absent from the V2.5.1 base used by the current samples. PV1-54 is a candidate for the message patient’s service episode, not an adopted mapping for the related mother’s Perinatal Context in a newborn A01. No PV2 field is selected by this definition as a generic Context Instance identifier.
+
+Illustrative provisional mapping. An illustrative provisional V2.5.1 mapping carries PERICTXID in an OBX with value type EI: OBX-5.1 is the identifier value, OBX-5.2 the namespace label, OBX-5.3 the universal assigning-authority identifier, and OBX-5.4 the universal identifier type. A separate PERICTXTYPE OBX with value type CWE carries the Context type code in OBX-5.1, its display in OBX-5.2 and its source coding-system designation in OBX-5.3. These locally named observations are provisional illustrative mappings; their use is not a claim that base HL7 defines these observation identifiers. Preserve the source coding-system designation and separately identify the established DTContextTypeCodeCS binding; do not silently replace a source L designation.
+
+Source implementation mapping. The selected V2 version, source location, value type, assigning authority, Context type coding and subject association SHALL be documented by the implementation. A source rendering SHALL distinguish message-carried context from context supplied only by the Task, package metadata or an authorized lookup. It SHALL NOT make a missing source context appear to have been present in the original V2 message.
+
+For a newborn Birth Admission, label the mother’s context “Related maternal Perinatal Context” and show the source-supported maternal identifier and namespace separately from the newborn’s patient identifier and PV1-19 visit identifier. State that the maternal context supports a separately identified TX3 activity; it does not make the newborn the patient of the maternal episode. PID-21 supports the maternal patient association but is not the Perinatal episode identifier. The provisional local OBX mapping, a later-version PV1-54 candidate and an actual agreed source profile SHALL remain distinguishable.
+
+#### Transaction Correlation
+
+The originating transaction concludes when the authorized Receiver Actor accepts or rejects the whole structured payload into its intended workflow. TX8 is a separate subsequent transaction reporting that disposition. If no correlated TX8 arrives within the Chapter 3 reporting interval, the originating system SHALL close its tracking context as outcome unconfirmed and requiring follow-up. Timeout does not establish rejection, acceptance, or non-receipt. A late report resolves the original outcome while preserving timeout and follow-up history.
+
+The Content Consumer SHALL gather and maintain supplied Context Instance Identifiers with their values, assigning authorities, types, and subject associations. It SHALL preserve relevant identifiers in later exchanges concerning those contexts. Visit, perinatal, referral, order, request, and other contexts may continue beyond the individual transaction; a later exchange has its own transaction identity.
+
+Apply the common Chapter 3 transaction correlation requirements. A responding TX8 SHALL identify the originating TX2 Transaction Instance and applicable Context Instance(s). Any subsequent maternal Birth Notification activity described in Section 7.2 establishes a separately identified activity and transaction.
+
+#### Workflow Status Instructions
+
+Workflow Status Update Endpoint(s), whole-payload acceptance reporting instructions, and correlation identifiers belong to the Workflow Activity Task as defined in Chapter 3. Disposition-Notification-To remains a transport-level return address and SHALL NOT be interpreted as a Workflow Status Update Endpoint.
+
+At least one Workflow Status Update Endpoint SHALL be designated by the initiating system. Subsequent Sender Actors SHALL preserve existing endpoints and MAY add an endpoint when they need the eventual processing outcome. Apply Chapter 3 and TX8 for terminal outcome reporting: whole-payload acceptance SHALL be reported when requested and MAY be reported otherwise; defined processing failures requiring Workflow Status SHALL be reported as structured payload rejection regardless of whether successful reporting was requested.
+
+The Content Creator MAY select the initial Workflow Status Update Endpoint from supplied discovery information or explicit configuration. It SHALL carry that endpoint in the originating Task; subsequent actors preserve and accumulate the carried endpoint set under Chapter 3.
+
+### Human-Readable Content
+
+The human-readable communication SHALL adequately describe the requested Workflow Activity and the information in the Structured Payload Package. A reader SHALL be able to understand the registration or admission event and the processing being requested without interpreting the HL7 Version 2 notification or FHIR Task. Surface the following required information when present in the source notification or associated Task; unavailable values SHALL NOT be invented.
+
+The HTML, TXT and debug renderings SHALL distinguish the patient, visit/encounter, established episode and Transaction/Workflow Activity identifiers. For each supplied Context identifier, show its value, assigning namespace/authority, type code and readable type, whose Context it is, source location and mapping status. Where the source does not establish the type, authority or subject association, show that limitation rather than infer a value. The debug view SHALL identify the segment/field/component, OBX observation identifier and value type when applicable. A later-version field present in a V2.5.1 message SHALL be identified as an extension needing an agreed profile, not as a base V2.5.1 field.
+
+For a newborn Birth Admission, label the mother’s context “Related maternal Perinatal Context” and show the source-supported maternal identifier and namespace separately from the newborn’s patient identifier and PV1-19 visit identifier. State that the maternal context supports a separately identified TX3 activity; it does not make the newborn the patient of the maternal episode. PID-21 supports the maternal patient association but is not the Perinatal episode identifier. The provisional local OBX mapping, a later-version PV1-54 candidate and an actual agreed source profile SHALL remain distinguishable.
+
+| **Information to surface** | **TX2 human-readable coverage** |
+|----|----|
+| Workflow Activity | Identify send-admission-notification and the requested processing action; include the logical Workflow Activity identifier and applicable Context identifiers with readable labels. |
+| Patient and identifiers | Show patient name, date of birth, administrative sex, patient identifiers and assigning authorities, and available address/contact information needed to recognize or match the patient. A newborn notification identifies the newborn as the subject. For a newborn Birth Admission, SHALL also identify the related mother using source-supported identifiers and assigning authorities, clearly distinguishing the mother from the newborn patient. |
+| Related maternal Perinatal Context | For a newborn Birth Admission, SHALL show the mother’s established Perinatal identifier and assigning authority/namespace with a readable maternal label and source-supported mother–newborn relationship. Distinguish it from the newborn’s patient and encounter identifiers; explain that it supports the separate maternal TX3 activity. |
+| Notification and event | State whether this is registration, hospital admission, or ED admission; surface the HL7 Version 2 message/event type, event time, and notification/control identifier when supplied. |
+| Encounter and facility | Show encounter/visit identifier, registration or admission time, patient class/setting, treating facility and location, and available responsible providers. Include other encounter timing when supplied and relevant. |
+| Source and recipient | Identify the responsible Information Source and intended Information Recipient; distinguish clinical source, contributing organization, Intermediary, and transport sender when they differ. |
+| Workflow Status instructions | State whether whole-payload acceptance reporting is requested and identify the designated Workflow Status Update Endpoint(s); distinguish transport disposition-reporting addresses. |
+| Included Payload objects | Identify the primary HL7 Version 2 notification and Workflow Activity Task by title or description and media type. No secondary clinical documents or supplemental Payload objects are permitted. Clinical documents are sent separately using TX5. |
+| Included Provenance | When included, SHOULD summarize activity, responsible actor/organization, activity time, and affected object or transaction. Distinguish clinical authorship, package creation, transmission, and processing. |
+| Context identity and source transparency | The HTML, TXT and debug renderings SHALL distinguish the patient, visit/encounter, established episode and Transaction/Workflow Activity identifiers. For each supplied Context identifier, show its value, assigning namespace/authority, type code and readable type, whose Context it is, source location and mapping status. Where the source does not establish the type, authority or subject association, show that limitation rather than infer a value. The debug view SHALL identify the segment/field/component, OBX observation identifier and value type when applicable. A later-version field present in a V2.5.1 message SHALL be identified as an extension needing an agreed profile, not as a base V2.5.1 field. For a newborn Birth Admission, label the mother’s context “Related maternal Perinatal Context” and show the source-supported maternal identifier and namespace separately from the newborn’s patient identifier and PV1-19 visit identifier. State that the maternal context supports a separately identified TX3 activity; it does not make the newborn the patient of the maternal episode. PID-21 supports the maternal patient association but is not the Perinatal episode identifier. The provisional local OBX mapping, a later-version PV1-54 candidate and an actual agreed source profile SHALL remain distinguishable. |
+
+### Provenance Requirements
+
+Initiating Provenance is OPTIONAL. When supplied, each independently attributable Provenance information object SHALL be a FHIR Collection Bundle containing its assertions and required supporting agents, classified DT-20261011-1, Provenance Information, from DTTemporaryCodeCS. Apply Chapter 3 Section 3.10 and Appendix D for activities, participation types, targets, and resolution. No additional initiating assertion is required by this definition. The subsequent TX8 SHALL carry whole-package accept or reject Provenance, with coded performer identifying the receiving Organization responsible for the disposition.
+
+### Direct Message and Transport Requirements
+
+TX2 uses the common Direct message metadata defined by Chapter 3. Transaction identity and Workflow Status instructions are carried by the Workflow Activity Task rather than duplicated as Direct transport headers.
+
+Final Destination is intentionally implementation-dependent. Depending on the receiving architecture and edge protocol, successful delivery may be established through SMTP, an IMAP/mailbox arrangement, XDR, a custom API, or another supported receiving interface. A successful Final Destination Delivery Notification does not establish that the Payload was parsed, matched, routed, accepted, or delivered into its intended business workflow.
+
+Apply the common Chapter 3 message header, selected metadata representation, XD edge Subject convention, MIME packaging, and Direct delivery-notification requirements without modification. The XD Subject convention SHALL NOT be used for the FHIR metadata option.
+
+## XD Metadata Guidance — HOW
+
+XD is the fully specified representation of Payload Metadata for this transaction. The requirements in this section define package-level and Payload-object metadata semantics and serve as the source requirements for alternative metadata representations.
+
+### SubmissionSet
+
+The SubmissionSet SHALL have exactly one author identifying the Organization initiating the requested Shared Activity, optionally identifying a person acting for that Organization. This package authorship is distinct from the contributing Organization identified by sourceId and from the authors of submitted artifacts. The Content Creator SHALL isolate the package author; clinical artifact authors SHALL be preserved.
+
+| **Conf.** | **Metadata element** | **Value / source** | **TX2 guidance** |
+|----|----|----|----|
+| R | uniqueId | System-assigned | Globally unique SubmissionSet identifier. |
+| R | availabilityStatus | urn:oasis:names:tc:ebxml-regrep:StatusType:Approved | Fixed status. |
+| R | submissionTime | System-generated submission time | No additional TX2 constraint. |
+| R | intendedRecipient | Intended person or Organization and known telecom | Identify the intended person or Organization, including its known telecom. The current Routing Target may differ from this intended party; SMTP RCPT TO identifies the Routing Target. |
+| RE/R2 | patientId | Patient identifier known to the intended recipient or mutually agreed exchange domain | Populate only when such an identifier is known. SHALL NOT copy a sender-local identifier merely because recipient patientId is unavailable. |
+| R | Patient Info | Patient demographics from the notification using DocumentEntry.sourcePatientInfo representation and semantics | Required for a single-patient SubmissionSet even when patientId is known; supports patient matching and confirmation. |
+| R | author | Initiating Organization, optionally its author person; preserve known telecom | Identifies the Organization initiating the Shared Activity, optionally a person acting for it; distinct from the current contributor and transport sender. |
+| R | sourceId | Established Organization Identity OID of the SubmissionSet Source | Identifies the entity responsible for contributing the SubmissionSet. When Task.requester is also the SubmissionSet Source, reuse that organization’s established Organization Identity OID; otherwise identify the contributing source independently. |
+| R | purpose | send-admission-notification | Canonical DTCodeSystem code; SHALL align with Workflow Activity Task.code. |
+| R | contentTypeCode | Type code of the principal admission-related notification DocumentEntry | Identifies the package content, not the transaction. Use the selected event type: Hospital Registration, Hospital Admission, or Emergency Department Admission. |
+| O | title | cc-maternal-health-birth:send-admission-notification:\[display name for contentTypeCode\] | Use the display name associated with the selected event type. |
+| O | description | Human-readable description of the notification | For HL7 V2, populate an equivalent concise description. |
+| C | referenceIdList | Applicable established Context Instance identifiers; required maternal Perinatal Context for newborn Birth Admission | Carry the established maternal identifier, namespace and urn:dt-org:dsm:map:2025:perinatal type for a newborn Birth Admission. Label it as related maternal Context; preserve newborn patient identity. Other Context types use Chapter 3 bindings. |
+| O | limitedMetadata | No fixed value specified | Use as defined by the base XD/XDM specification. |
+| R | entryUUID | System-assigned UUID | SubmissionSet registry object identifier. |
+| O | slot/@name | List of UUIDs for documents contained in the SubmissionSet | Populate when the selected packaging approach uses this extension. |
+
+### Workflow Activity Task DocumentEntry
+
+The Workflow Activity Task DocumentEntry SHALL carry the single Task specified in Section 2.2, separately from the primary HL7 Version 2 notification. Apply common Chapter 3 metadata requirements.
+
+### Primary DocumentEntry
+
+For HL7 V2 notifications, DocumentEntry.creationTime SHALL use MSH-7 message creation time. serviceStartTime and serviceStopTime SHALL use source-supported PV1-44 and PV1-45, respectively. EVN-2 SHALL be identified as event recorded time; EVN-6, when supplied, SHALL be identified as actual event occurrence time. Missing EVN-6 SHALL remain unavailable, and disagreements with visit boundaries SHALL be surfaced without silent substitution. Preserve source precision and timezone meaning. Event occurrence has no separate standard DocumentEntry timestamp field; do not misuse eventCodeList as a timestamp.
+
+The principal DocumentEntry contains the HL7 Version 2 admission-related notification.
+
+| **Conf.** | **Metadata element** | **Value / source** | **TX2 guidance** |
+|----|----|----|----|
+| R | entryUUID | System-assigned | Registry entry identifier. |
+| R/X | URI | System-assigned package URI | As required by the selected XDM option. |
+| R | uniqueId | System-assigned | Globally unique identifier for this Payload instance. |
+| R | mimeType | text/hl7v2 | Fixed MIME type. |
+| RE/R2 | formatCode | Applicable HL7 V2 notification format code when established | No additional TX2 fixed value. |
+| RE/R2 | languageCode | Language of human-readable content | Populate when known. |
+| R | classCode | 86530-3 Hospital notification | Classifies the information object. SHALL NOT carry the transaction code. |
+| R | typeCode | Specific admission-related event code | Hospital Registration: DT20260927-1; Hospital Admission: 79429-7; Emergency Department Admission: 98141-5. |
+| O | title | Consistent with SubmissionSet.title | Keep title consistent across the package. |
+| C | referenceIdList | Applicable subset of SubmissionSet Context identifiers | For a newborn Birth Admission, preserve the required related maternal Perinatal identifier, namespace/type, and applicable newborn encounter Context. The document remains about the newborn. |
+| RE/R2 | patientId | Patient identifier known to the receiver or mutually agreed exchange domain | Use the same recipient-identity strategy as the SubmissionSet. |
+| RE/R2 | sourcePatientId | Patient identifier from PID / source system | Carries the sender/source-local patient identifier. |
+| RE/R2 | sourcePatientInfo | Patient demographics from PID | Source patient demographics. |
+| RE/R2 | creationTime | MSH-7 notification/message creation time | Preserve notification creation separately from event occurrence and visit boundaries. |
+| RE/R2 | author | Treating facility name from PV1 or represented location | Identifies the treating facility responsible for the event. |
+| R | author.role | Source-supported patient/act-specific author function | Use the Chapter 3 Care Team Member Function binding when known; do not substitute a facility label for a person’s function. |
+| O | author.specialty | No additional TX2 constraint | Populate if available. |
+| O | serviceStartTime | Event/encounter start time when known | Populate from HL7 V2 event/visit data. |
+| O | serviceStopTime | Event/encounter stop time when known | Populate when applicable. |
+| RE/R2 | practiceSettingCode | Code describing the clinical practice setting | Populate from available event/facility data. |
+| RE/R2 | confidentialityCode | Applicable confidentiality code | Populate consistently with organizational policy. |
+| RE/R2 | healthcareFacilityTypeCode | Code describing the treating facility | Populate from the facility/location represented in the event. |
+| O | limitedMetadata | No fixed value specified | Use as defined in the base profile. |
+| R | objectType | urn:uuid:7edca82f-054d-47f2-a032-9b2a5b5186c1 | Fixed XDS object type. |
+| O | Slot/@name | Available extensions | Use only extensions permitted by the base profile. |
+| R/O | hash | Calculated document hash | Follow the base XDM/XDR option requirements. |
+| R/O | size | Document size in bytes | Follow the base XDM/XDR option requirements. |
+
+### Provenance DocumentEntry(s)
+
+Apply common Chapter 3 metadata and Provenance requirements to any included Provenance. TX2 imposes no additional initiating-package Provenance object requirement. Preserve the role distinctions in Section 1.3 and the separate downstream activity described in Section 7.2.
+
+### Human-Readable DocumentEntry
+
+The human-readable DocumentEntry contains the human-readable healthcare communication included with the notification. It SHALL describe the same admission-related event represented by the principal HL7 Version 2 notification. Its patient, Context, event timing, source, and confidentiality metadata SHALL remain consistent with the principal notification DocumentEntry. Where a metadata element is applicable to both DocumentEntries, use the same semantics defined in Section 3.3 while classifying the human-readable information object with the applicable human-readable document class/type rather than the HL7 V2 event type.
+
+Apply the identical-copy preservation requirements in Chapter 3 and the content coverage in Section 2.3. Include every supplied HTML alternative inside the Structured Payload Package when HTML is supplied in MIME Part 1.
+
+### Secondary Data DocumentEntry(s)
+
+Intentionally blank. Secondary information objects are not permitted in TX2.
+
+## FHIR Metadata Guidance — HOW
+
+When FHIR is used to represent Payload Metadata, implementers SHALL apply the same metadata requirements, coding, and semantics specified in the XD Metadata Guidance using the guide’s XD-to-FHIR mapping. SubmissionSet metadata is represented in a FHIR List Resource, and corresponding XD DocumentEntry metadata is represented in FHIR DocumentReference Resources referenced by the List. This is an alternative representation of the same Payload Metadata, not a different metadata model.
+
+The Workflow Activity Task remains the computable statement of the requested Shared Activity. Task.code SHALL carry send-admission-notification. The FHIR representation SHALL preserve the same patient identity, Context/correlation, information-object classification, source, and provenance semantics required by this definition and Chapter 3.
+
+### SubmissionSet Representation
+
+Apply the common XD-to-FHIR mapping to Section 3.1. Preserve package identification, recipient, patient demographics and identity, source, purpose, event classification, and applicable Context semantics.
+
+Apply Appendix D: List.source uses a permitted FHIR R4 target, with ihe-authorOrg on List.source identifying the initiating author Organization; Organization is not a direct List.source target. ihe-sourceId identifies the current contributing Organization. dt-intendedRecipient identifies the same intended party as the Task recipient; a transport Endpoint SHALL NOT replace that party’s identity.
+
+### Workflow Activity Task
+
+Use the single Workflow Activity Task specified in Section 2.2 in addition to the primary notification. Preserve identification, requested action, Context, originating-transaction correlation, and Workflow Status instructions.
+
+### Primary Payload Representation
+
+Apply the common mapping to the primary HL7 Version 2 notification metadata in Section 3.3. Preserve the notification as the primary information object and its admission-related event classification. For a newborn Birth Admission, preserve the mother’s related Perinatal Context identifier and its namespace/type without changing the newborn patient identity.
+
+### Provenance Collection Bundle(s)
+
+Apply Chapter 3.10 and Appendix D to each supplied Provenance Collection Bundle. Preserve assertions, coded activities, participation types, agents and logical targets. Its entries remain inside that carrying bundle; they are not automatically outer Bundle peers.
+
+### Human-Readable Content
+
+Preserve Sections 2.1, 2.3, and 3.5 human-readable content, metadata consistency, and identical-copy requirements using the common FHIR representation.
+
+### Secondary Data Resource(s)
+
+Intentionally blank. Secondary information objects are not permitted in TX2.
+
+## Context IG Guidance
+
+Apply the common Context identification and correlation requirements in Chapter 3 and this transaction’s Context provisions.
+
+## Technical Actor Functional Requirements — WHO DOES WHAT
+
+The following provisions describe technical actor functional requirements.
+
+### Sender Actor
+
+The Sender Actor combines Content Creator and Message Sender functions. It creates and preserves the information objects, metadata, Context identifiers and applicable Provenance, then packages and transmits the message.
+
+| **Actor** | **Requirement category** | **Normative requirement** |
+|----|----|----|
+| Content Creator | Payload creation | SHALL create the Payload content required by send-admission-notification and preserve the responsible Information Source and applicable clinical/workflow provenance. For a newborn Birth Admission, SHALL preserve source-supported maternal association and carry forward the previously received maternal Perinatal Context identifier with assigning authority/namespace and type as specified in Section 2.2.2. |
+
+| **Actor** | **Requirement category** | **Normative requirement** |
+|----|----|----|
+| Message Sender | Transmission | SHALL package and transmit the Direct message using the common Chapter 3 message metadata and the Payload Metadata / packaging constraints defined for this transaction. |
+
+### Receiver Actor
+
+The Receiver Actor combines Message Receiver and Content Consumer functions. It validates receipt, resolves required patient and Context associations, determines whole-package disposition, and causes required TX8 reporting.
+
+| **Actor** | **Requirement category** | **Normative requirement** |
+|----|----|----|
+| Message Receiver | Receipt | SHALL receive and validate the Direct message and make the Payload and Payload Metadata available to the Content Consumer. |
+
+| **Actor** | **Requirement category** | **Normative requirement** |
+|----|----|----|
+| Content Consumer | Processing | SHALL process the Payload according to the supported send-admission-notification behavior and applicable local workflow. For a newborn Birth Admission, SHALL preserve the newborn patient identity, validate the related maternal identifier/association for any separately requested TX3 generation, and determine TX2 and downstream outcomes independently as specified in Section 7. |
+| Information Recipient | Workflow Status | SHALL apply the Chapter 3 TX8 rules after determining the terminal processing outcome. Whole-payload acceptance is reported when requested and MAY be reported otherwise; defined processing failures requiring Workflow Status SHALL be reported as structured payload rejection. |
+
+## Transaction-Specific Processing — WHAT IS SPECIAL
+
+A05 communicates advance registration/pre-admission and uses DT20260927-1 Hospital Registration Notification from DTTemporaryCodeCS. A04 arrival/check-in is outside this Use Case. Acceptance of A05 requires a patient match at the receiving site and acceptance of the notification into its supported registration workflow. Do not require a pre-existing clinical Visit merely because a future visit or admission is anticipated. A05 alone does not assert that the future clinical encounter has started.
+
+Apply the common processing anomaly handling and terminal Workflow Status requirements in Chapter 3 Section 3.9.6 and the TX8 send-workflow-status Transaction Definition. The following requirements and qualifications are specific to TX2.
+
+When a received transaction results in a defined terminal failure requiring TX8, apply the Extensible binding to MAPFailureReasonVS (http://objects.directtrust.org/standards/fhir/ValueSet/map-failure-reason) specified in Chapter 3 Section 3.9.2. Use a shared applicable code with an explanation; optional missing information does not alone establish rejection. Local filtering or preparation failures before this transaction is issued SHALL NOT be reported as rejection of a nonexistent transaction.
+
+### Admission Event Classification
+
+TX2 uses one reusable transaction for multiple admission-related events. The Shared Activity is identified by send-admission-notification, while the principal Payload object is classified by its specific event type. The event type therefore belongs in DocumentEntry.typeCode and, unless otherwise specified, SubmissionSet.contentTypeCode; it SHALL NOT replace Task.code or SubmissionSet.purpose.
+
+| **Admission-related event** | **Principal DocumentEntry classCode** | **Principal DocumentEntry typeCode** |
+|----|----|----|
+| Patient / Hospital Registration | 86530-3 Hospital notification | DT20260927-1 Hospital Registration Notification |
+| Hospital Admission | 86530-3 Hospital notification | 79429-7 Hospital admission notification |
+| Emergency Department Admission | 86530-3 Hospital notification | 98141-5 Emergency department admission notification |
+
+### Newborn Admission — Special Processing Path
+
+A Newborn Admission does not change the processing requirements of the send-admission-notification transaction. The newborn admission notification is received, matched, validated, and processed as TX2 for the newborn patient, and its terminal processing outcome is reported according to the Chapter 3 TX8 rules.
+
+Successful processing of a newborn Birth Admission A01 MAY trigger a separately identified TX3 send-birth-notification activity. TX3 uses the carried maternal association and established Perinatal Context to resolve the mother and her OB/practice endpoint and create a maternal Birth Notification CDA. The mother is the CDA recordTarget and the baby is the explicit subject of its newborn section. The generated maternal HTML Source Form uses verified source facts and resolved maternal Context. The original newborn A01 and its full rendering SHALL NOT be included as secondary objects in the outgoing maternal TX3 package; retain the source in the transforming system for traceability. TX3 has its own Transaction Instance, Workflow Activity Task, actor roles, Payload Metadata, Provenance, and TX8 outcome.
+
+This separation is intentional: the Provenance of receiving and processing the newborn admission belongs to TX2; the Provenance of creating the maternal Birth Notification belongs to the subsequent creation activity; and the Provenance of transmitting and processing that Birth Notification belongs to the subsequent send transaction.
+
+Failure of a separately initiated maternal Birth Notification creation or send activity SHALL NOT change an already established successful outcome for processing the newborn TX2. Determine and report each activity’s outcome independently according to its applicable transaction requirements.
+
+### Patient and Context Resolution Qualifications
+
+For A01 admission processing, an initially unknown patient does not by itself require rejection when the receiving endpoint’s declared policy permits establishing or resolving that patient. A05 advance-registration acceptance requires a match to an existing patient at the receiving site; new-chart establishment does not satisfy that requirement. If patient resolution under the applicable rule fails and prevents requested processing, apply TX8 rejection. No endpoint is required to establish a patient beyond its declared capabilities.
+
+An absent optional Context identifier SHALL NOT, by itself, cause TX2 rejection. The maternal Perinatal identifier required for a newborn Birth Admission in this use case is not optional. If it is missing, ambiguous, or unresolved, do not create or send an uncorrelated maternal Birth Notification. Determine whether the deficiency prevents the processing requested by the incoming TX2 Task: when it prevents required TX2 processing, report the terminal failure under the common TX8 rules; when newborn admission processing has succeeded and maternal notification generation is a separately requested downstream activity, preserve the successful TX2 outcome and record/report the downstream failure separately. Do not issue a TX8 against a TX3 Transaction Instance that was never created. Do not assign the newborn as the patient of the mother’s Perinatal Context to resolve the deficiency.
+
+## Relevant Examples — SHOW ME
+
+These narrative patterns describe TX2 registration and admission scenarios. They are not references to supplied executable TX2 sample packages. XD and FHIR metadata options preserve the same transaction and event-classification semantics. For common whole-payload acceptance and structured payload rejection examples, see Section 8 of the TX8 send-workflow-status Transaction Definition.
+
+### Maternal Hospital Registration
+
+In the Mimi Shell reference scenario, the hospital registration notification is a TX2 send-admission-notification. Task.code and SubmissionSet.purpose identify send-admission-notification. The principal HL7 V2 DocumentEntry uses classCode 86530-3 Hospital notification and typeCode DT20260927-1 Hospital Registration Notification. Patient identity and Patient Info follow the Chapter 3 rules, and applicable Perinatal/Visit Context identifiers are carried when known.
+
+### Maternal Hospital Admission
+
+For the hospital admission notification, the same TX2 Shared Activity is used. The principal HL7 V2 DocumentEntry uses classCode 86530-3 Hospital notification and typeCode 79429-7 Hospital admission notification. The transaction identity does not change merely because the event type changes.
+
+### Newborn Admission
+
+A newborn Birth Admission A01 is processed under TX2 for the newborn patient. It carries source-supported maternal-association information and the mother’s established Perinatal Context identifier, previously learned through the birth-registration workflow or Antepartum Summary sharing. The human-readable communication labels that Context as maternal. After successful TX2 processing, the receiving implementation may initiate TX3 send-birth-notification with a separate Task and Transaction Instance. TX3 creates the maternal CDA and generated HTML Source Form; it retains the original A01 for traceability without attaching it to the maternal package.
+
+If newborn admission processing succeeds but the maternal Context or OB endpoint cannot be resolved for the separately requested downstream activity, the established TX2 success remains valid and TX3 generation is withheld. If the incoming TX2 Task requires processing that the missing maternal information prevents, report TX2 structured payload rejection according to Chapter 3 and TX8. These are different requested-activity outcomes; neither case permits inventing maternal identifiers or an endpoint.
