@@ -186,7 +186,7 @@ for (const group of layout.groups) {
     writePage({ folderSlug, fileSlug: 'index', title: h1, lines, mediaDir: dir, extra: downloadsBlock(group, folderSlug, groupDir) })
   } else if (group.kind === 'transactions') {
     const landing = pandoc(findOne(groupDir, group.landing, '.docx'))
-    writePage({ folderSlug, fileSlug: 'index', title: group.title, lines: landing.lines, mediaDir: landing.dir })
+    const txLinks = {}
     for (const tx of group.transactions) {
       const file = findOne(groupDir, tx.docx, '.docx')
       const name = path.basename(file).replace(/_\d{8}_v\d+.*\.docx$/i, '')
@@ -202,7 +202,15 @@ for (const group of layout.groups) {
       const fileSlug = slugify(name)
       writePage({ folderSlug, fileSlug, title, lines: pageLines, mediaDir: dir })
       items.push({ text: title, link: `/${folderSlug}/${fileSlug}` })
+      txLinks[tx.label] = `/${folderSlug}/${fileSlug}`
     }
+    // The catalog table is raw HTML, which VitePress does not rebase, so prefix the site base here.
+    const base = fs.readFileSync(path.join(DOCS_DIR, '.vitepress', 'config.mts'), 'utf8').match(/base:\s*'([^']*)'/)?.[1] ?? '/'
+    let md = landing.lines.join('\n')
+    for (const [label, link] of Object.entries(txLinks)) {
+      md = md.replace(new RegExp(`<td>${label}</td>`), `<td><a href="${base.replace(/\/$/, '')}${link}">${label}</a></td>`)
+    }
+    writePage({ folderSlug, fileSlug: 'index', title: group.title, lines: md.split('\n'), mediaDir: landing.dir })
   } else if (group.kind === 'appendices') {
     const landing = pandoc(findOne(groupDir, group.landing, '.docx'))
     const pages = []

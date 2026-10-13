@@ -29,56 +29,56 @@ The defining specifications below establish the organization of reusable transac
 </thead>
 <tbody>
 <tr>
-<td>TX1</td>
+<td><a href="/cc-maternal-health-birth/03-02-map-transaction-definitions/tx1-send-outpatient-visit-notification">TX1</a></td>
 <td>send-outpatient-visit-notification<br />
 Event Notifications via Direct</td>
 <td>Outpatient visit notification (HL7 V2)</td>
 <td>Send notification that an outpatient maternal-health encounter has occurred or completed, in human-readable and machine-processable form.</td>
 </tr>
 <tr>
-<td>TX2</td>
+<td><a href="/cc-maternal-health-birth/03-02-map-transaction-definitions/tx2-send-admission-notification">TX2</a></td>
 <td>send-admission-notification<br />
 Event Notifications via Direct</td>
 <td>Registration or admission notification (HL7 V2)</td>
 <td>Send notification of a registration or admission event relevant to the maternal-health use case, in human-readable and machine-processable form.</td>
 </tr>
 <tr>
-<td>TX3</td>
+<td><a href="/cc-maternal-health-birth/03-02-map-transaction-definitions/tx3-send-birth-notification">TX3</a></td>
 <td>send-birth-notification<br />
 Care Coordination for Maternal Health – Birth</td>
 <td>Maternal Health Birth Notification (CDA)</td>
 <td>Communicate newborn birth information to the mother’s care team through the specialized maternal-health birth notification document.</td>
 </tr>
 <tr>
-<td>TX4</td>
+<td><a href="/cc-maternal-health-birth/03-02-map-transaction-definitions/tx4-send-discharge-notification">TX4</a></td>
 <td>send-discharge-notification<br />
 Event Notifications via Direct</td>
 <td>Hospital or ED discharge notification (HL7 V2)</td>
 <td>Send notification of a discharge event relevant to the maternal-health use case, in human-readable and machine-processable form.</td>
 </tr>
 <tr>
-<td>TX5</td>
+<td><a href="/cc-maternal-health-birth/03-02-map-transaction-definitions/tx5-send-documents">TX5</a></td>
 <td>send-documents<br />
 Send Documents via Direct</td>
 <td>Primary CDA document and permitted additional documents</td>
 <td>Send one or more maternal-health documents to support pregnancy notification and risk assessment, referral/orders, antepartum, birth, postpartum, and continuity-of-care information sharing.</td>
 </tr>
 <tr>
-<td>TX6</td>
+<td><a href="/cc-maternal-health-birth/03-02-map-transaction-definitions/tx6-query-for-documents">TX6</a></td>
 <td>query-for-documents<br />
 Care Coordination for Maternal Health – Birth — placeholder</td>
 <td>Documents discovered and retrieved through query protocols</td>
 <td>Represent document request and retrieval exchanges outside Direct; not a specified Direct transaction.</td>
 </tr>
 <tr>
-<td>TX7</td>
+<td><a href="/cc-maternal-health-birth/03-02-map-transaction-definitions/tx7-send-patient-update">TX7</a></td>
 <td>send-patient-update<br />
 Update Patient Matching Information via Direct</td>
 <td>Patient update A08, or Change List with an updated Patient resource</td>
 <td>Send updated patient information that may affect patient matching for parties with which information has previously been shared.</td>
 </tr>
 <tr>
-<td>TX8</td>
+<td><a href="/cc-maternal-health-birth/03-02-map-transaction-definitions/tx8-send-workflow-status">TX8</a></td>
 <td>send-workflow-status<br />
 Workflow Status via Direct</td>
 <td>Originating SubmissionSet/List information object; report Task and Provenance accompany it</td>
