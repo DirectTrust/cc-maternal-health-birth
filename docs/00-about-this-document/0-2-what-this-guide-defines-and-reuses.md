@@ -1,8 +1,8 @@
 ---
-title: "0.2 What This Guide Defines and Reuses"
+title: "What This Guide Defines and Reuses"
 ---
 
-# 0.2 What This Guide Defines and Reuses
+# What This Guide Defines and Reuses
 
 Care Coordination for Maternal Health – Birth defines a new Send Birth Notification transaction, for communicating information about a newborn to the mother’s care team.
 

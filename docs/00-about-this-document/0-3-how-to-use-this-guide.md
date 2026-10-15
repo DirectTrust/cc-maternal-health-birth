@@ -1,8 +1,8 @@
 ---
-title: "0.3 How to Use This Guide"
+title: "How to Use This Guide"
 ---
 
-# 0.3 How to Use This Guide
+# How to Use This Guide
 
 The five primary chapters explain the use case and its implementation requirements. Terms and Definitions establishes common language. Each Transaction Definition specifies a Shared Activity. The appendices provide supporting details, and References identifies the resources on which this guide builds. Illustrative examples demonstrate the requirements without replacing their specifications.
 
