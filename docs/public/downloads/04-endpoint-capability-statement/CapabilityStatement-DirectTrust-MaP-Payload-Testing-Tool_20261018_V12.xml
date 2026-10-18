@@ -1,0 +1,222 @@
+<?xml version='1.0' encoding='utf-8'?>
+<CapabilityStatement xmlns="http://hl7.org/fhir" xmlns:html="http://www.w3.org/1999/xhtml">
+  <id value="directtrust-map-payload-testing-tool" />
+  <meta>
+    <profile value="http://objects.directtrust.org/standards/fhir/StructureDefinition/map-endpoint-capabilitystatement" />
+  </meta>
+  <text>
+    <status value="additional" />
+    <html:div><html:h2>MaP Endpoint Capability Statement — UNVERIFIED CAPABILITY CATALOG (ALL OFF)</html:h2><html:table><html:tbody><html:tr><html:th>Responsible Organization / Service</html:th><html:td>DirectTrust Payload Testing Tool</html:td></html:tr><html:tr><html:th>Direct Address</html:th><html:td>mapFramework@Direct3.DirectTrust.org</html:td></html:tr><html:tr><html:th>Supported Use Case</html:th><html:td>cc-maternal-health-birth</html:td></html:tr><html:tr><html:th>FHIR Version</html:th><html:td>R4 (4.0.1)</html:td></html:tr><html:tr><html:th>Last Updated</html:th><html:td>2026-10-14</html:td></html:tr></html:tbody></html:table><html:h3>Candidate Capabilities — Disabled Until Verified</html:h3><html:p>The entries below identify potential capabilities for future implementation and verification. Every Sender Actor, Receiver Actor, and Preferred flag defaults to No. Turn on a specific role only after it is implemented and verified with recorded evidence. TX6 remains catalogued as a native IHE query outside the Direct exchange scope; do not enable it as a Direct capability.</html:p><html:table><html:thead><html:tr><html:th>Transaction</html:th><html:th>Sender Actor</html:th><html:th>Receiver Actor</html:th></html:tr></html:thead><html:tbody><html:tr><html:td>send-outpatient-visit-notification</html:td><html:td>No</html:td><html:td>No</html:td></html:tr><html:tr><html:td>send-admission-notification</html:td><html:td>No</html:td><html:td>No</html:td></html:tr><html:tr><html:td>send-birth-notification</html:td><html:td>No</html:td><html:td>No</html:td></html:tr><html:tr><html:td>send-discharge-notification</html:td><html:td>No</html:td><html:td>No</html:td></html:tr><html:tr><html:td>send-documents</html:td><html:td>No</html:td><html:td>No</html:td></html:tr><html:tr><html:td>query-for-documents</html:td><html:td>No</html:td><html:td>No</html:td></html:tr><html:tr><html:td>send-patient-update</html:td><html:td>No</html:td><html:td>No</html:td></html:tr><html:tr><html:td>send-workflow-status</html:td><html:td>No</html:td><html:td>No</html:td></html:tr></html:tbody></html:table><html:h3>Metadata Packaging</html:h3><html:table><html:thead><html:tr><html:th>Representation</html:th><html:th>Sender Actor</html:th><html:th>Receiver Actor</html:th><html:th>Preferred</html:th></html:tr></html:thead><html:tbody><html:tr><html:td>Payload containing XDM Metadata</html:td><html:td>No</html:td><html:td>No</html:td><html:td>No</html:td></html:tr><html:tr><html:td>Payload containing FHIR Metadata</html:td><html:td>No</html:td><html:td>No</html:td><html:td>No</html:td></html:tr></html:tbody></html:table><html:h3>Workflow Activity Task Processing Policy</html:h3><html:p>No Workflow Activity Task processing capability is asserted by this baseline. Support for receiving, validating, and executing Task instructions must be assessed separately under the applicable Transaction Definition. TX8 support must not be inferred merely from Task presence.</html:p><html:h3>Implementation Note</html:h3><html:p>This DRAFT catalog is not a verified deployed CapabilityStatement. Do not use it for Directory discovery, live routing, or conformance claims. Before enabling any flag, document the test evidence, approving reviewer, and verification date. Keep preferred=false until a supported representation is verified and approved as preferred.</html:p></html:div></text>
+  <extension url="http://objects.directtrust.org/standards/fhir/StructureDefinition/map-supported-usecase">
+    <valueCodeableConcept>
+      <coding>
+        <system value="http://objects.directtrust.org/standards/terminology/CodeSystem/ServDescCS" />
+        <code value="cc-maternal-health-birth" />
+        <display value="cc-maternal-health-birth" />
+      </coding>
+    </valueCodeableConcept>
+  </extension>
+  <extension url="http://objects.directtrust.org/standards/fhir/StructureDefinition/map-supported-transaction">
+    <extension url="transaction">
+      <valueCodeableConcept>
+        <coding>
+          <system value="http://objects.directtrust.org/standards/terminology/CodeSystem/DTCodeSystem" />
+          <code value="send-outpatient-visit-notification" />
+          <display value="Send Outpatient Visit Notification" />
+        </coding>
+      </valueCodeableConcept>
+    </extension>
+    <extension url="supportsSend">
+      <valueBoolean value="false" />
+    </extension>
+    <extension url="supportsReceive">
+      <valueBoolean value="false" />
+    </extension>
+  </extension>
+  <extension url="http://objects.directtrust.org/standards/fhir/StructureDefinition/map-supported-transaction">
+    <extension url="transaction">
+      <valueCodeableConcept>
+        <coding>
+          <system value="http://objects.directtrust.org/standards/terminology/CodeSystem/DTCodeSystem" />
+          <code value="send-admission-notification" />
+          <display value="Send Admission Notification" />
+        </coding>
+      </valueCodeableConcept>
+    </extension>
+    <extension url="supportsSend">
+      <valueBoolean value="false" />
+    </extension>
+    <extension url="supportsReceive">
+      <valueBoolean value="false" />
+    </extension>
+  </extension>
+  <extension url="http://objects.directtrust.org/standards/fhir/StructureDefinition/map-supported-transaction">
+    <extension url="transaction">
+      <valueCodeableConcept>
+        <coding>
+          <system value="http://objects.directtrust.org/standards/terminology/CodeSystem/DTCodeSystem" />
+          <code value="send-birth-notification" />
+          <display value="Send Birth Notification" />
+        </coding>
+      </valueCodeableConcept>
+    </extension>
+    <extension url="supportsSend">
+      <valueBoolean value="false" />
+    </extension>
+    <extension url="supportsReceive">
+      <valueBoolean value="false" />
+    </extension>
+  </extension>
+  <extension url="http://objects.directtrust.org/standards/fhir/StructureDefinition/map-supported-transaction">
+    <extension url="transaction">
+      <valueCodeableConcept>
+        <coding>
+          <system value="http://objects.directtrust.org/standards/terminology/CodeSystem/DTCodeSystem" />
+          <code value="send-discharge-notification" />
+          <display value="Send Discharge Notification" />
+        </coding>
+      </valueCodeableConcept>
+    </extension>
+    <extension url="supportsSend">
+      <valueBoolean value="false" />
+    </extension>
+    <extension url="supportsReceive">
+      <valueBoolean value="false" />
+    </extension>
+  </extension>
+  <extension url="http://objects.directtrust.org/standards/fhir/StructureDefinition/map-supported-transaction">
+    <extension url="transaction">
+      <valueCodeableConcept>
+        <coding>
+          <system value="http://objects.directtrust.org/standards/terminology/CodeSystem/DTCodeSystem" />
+          <code value="send-documents" />
+          <display value="Send Documents" />
+        </coding>
+      </valueCodeableConcept>
+    </extension>
+    <extension url="supportsSend">
+      <valueBoolean value="false" />
+    </extension>
+    <extension url="supportsReceive">
+      <valueBoolean value="false" />
+    </extension>
+  </extension>
+  <extension url="http://objects.directtrust.org/standards/fhir/StructureDefinition/map-supported-transaction">
+    <extension url="transaction">
+      <valueCodeableConcept>
+        <coding>
+          <system value="http://objects.directtrust.org/standards/terminology/CodeSystem/DTCodeSystem" />
+          <code value="query-for-documents" />
+          <display value="Query for Documents" />
+        </coding>
+      </valueCodeableConcept>
+    </extension>
+    <extension url="supportsSend">
+      <valueBoolean value="false" />
+    </extension>
+    <extension url="supportsReceive">
+      <valueBoolean value="false" />
+    </extension>
+  </extension>
+  <extension url="http://objects.directtrust.org/standards/fhir/StructureDefinition/map-supported-transaction">
+    <extension url="transaction">
+      <valueCodeableConcept>
+        <coding>
+          <system value="http://objects.directtrust.org/standards/terminology/CodeSystem/DTCodeSystem" />
+          <code value="send-patient-update" />
+          <display value="Send Patient Update" />
+        </coding>
+      </valueCodeableConcept>
+    </extension>
+    <extension url="supportsSend">
+      <valueBoolean value="false" />
+    </extension>
+    <extension url="supportsReceive">
+      <valueBoolean value="false" />
+    </extension>
+  </extension>
+  <extension url="http://objects.directtrust.org/standards/fhir/StructureDefinition/map-supported-transaction">
+    <extension url="transaction">
+      <valueCodeableConcept>
+        <coding>
+          <system value="http://objects.directtrust.org/standards/terminology/CodeSystem/DTCodeSystem" />
+          <code value="send-workflow-status" />
+          <display value="Send Workflow Status" />
+        </coding>
+      </valueCodeableConcept>
+    </extension>
+    <extension url="supportsSend">
+      <valueBoolean value="false" />
+    </extension>
+    <extension url="supportsReceive">
+      <valueBoolean value="false" />
+    </extension>
+  </extension>
+  <extension url="http://objects.directtrust.org/standards/fhir/StructureDefinition/map-metadata-packaging">
+    <extension url="representation">
+      <valueCodeableConcept>
+        <coding>
+          <system value="http://objects.directtrust.org/standards/terminology/CodeSystem/MetadataTypeCS" />
+          <code value="urn:dt-org:dsm:map:SMTP+XD:1.0" />
+          <display value="Payload containing XDM Metadata" />
+        </coding>
+      </valueCodeableConcept>
+    </extension>
+    <extension url="supportsSend">
+      <valueBoolean value="false" />
+    </extension>
+    <extension url="supportsReceive">
+      <valueBoolean value="false" />
+    </extension>
+    <extension url="preferred">
+      <valueBoolean value="false" />
+    </extension>
+  </extension>
+  <extension url="http://objects.directtrust.org/standards/fhir/StructureDefinition/map-metadata-packaging">
+    <extension url="representation">
+      <valueCodeableConcept>
+        <coding>
+          <system value="http://objects.directtrust.org/standards/terminology/CodeSystem/MetadataTypeCS" />
+          <code value="urn:dt-org:dsm:map:SMTP+FHIR:1.0" />
+          <display value="Payload containing FHIR Metadata" />
+        </coding>
+      </valueCodeableConcept>
+    </extension>
+    <extension url="supportsSend">
+      <valueBoolean value="false" />
+    </extension>
+    <extension url="supportsReceive">
+      <valueBoolean value="false" />
+    </extension>
+    <extension url="preferred">
+      <valueBoolean value="false" />
+    </extension>
+  </extension>
+  <url value="http://objects.directtrust.org/standards/fhir/CapabilityStatement/directtrust-map-payload-testing-tool" />
+  <version value="1.6.0-unverified-baseline" />
+  <name value="DirectTrustMaPPayloadTestingTool" />
+  <title value="DirectTrust Payload Testing Tool - MaP Endpoint Capability Statement" />
+  <status value="draft" />
+  <experimental value="true" />
+  <date value="2026-10-18" />
+  <publisher value="DirectTrust" />
+  <description value="UNVERIFIED CAPABILITY CATALOG — ALL OPERATIONAL FLAGS OFF. This artifact enumerates potential MaP testing-tool transaction and metadata capabilities for future verification. Every supportsSend, supportsReceive, and preferred flag is false by default. Set an individual support flag to true only after implementation and evidence-based verification of that actor role and capability. Set preferred true only for a verified supported metadata representation after preference is approved. TX6 remains a native IHE query outside the Direct messaging scope and is not asserted as a Direct exchange capability. This draft is not a deployed endpoint capability declaration and SHALL NOT be used for live Directory discovery, routing, or conformance assertions." />
+  <kind value="instance" />
+  <implementation>
+    <description value="DirectTrust Payload Testing Tool" />
+  </implementation>
+  <fhirVersion value="4.0.1" />
+  <format value="application/fhir+json" />
+  <format value="application/fhir+xml" />
+  <messaging>
+    <endpoint>
+      <protocol>
+        <system value="http://terminology.hl7.org/CodeSystem/endpoint-connection-type" />
+        <code value="direct-project" />
+        <display value="Direct Project" />
+      </protocol>
+      <address value="mailto:mapFramework@Direct3.DirectTrust.org" />
+    </endpoint>
+    <documentation value="Direct-based MaP test endpoint for cc-maternal-health-birth. The complete Reusable Transaction Catalog is enumerated in the endpoint capability extensions; transaction direction support is declared independently." />
+  </messaging>
+</CapabilityStatement>

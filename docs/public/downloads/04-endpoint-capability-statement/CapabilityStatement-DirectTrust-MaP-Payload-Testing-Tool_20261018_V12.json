@@ -8,7 +8,7 @@
   },
   "text": {
     "status": "additional",
-    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><h2>MaP Endpoint Capability Statement</h2><table><tbody><tr><th>Responsible Organization / Service</th><td>DirectTrust Payload Testing Tool</td></tr><tr><th>Direct Address</th><td>mapFramework@Direct3.DirectTrust.org</td></tr><tr><th>Supported Use Case</th><td>cc-maternal-health-birth</td></tr><tr><th>FHIR Version</th><td>R4 (4.0.1)</td></tr><tr><th>Last Updated</th><td>2026-10-12</td></tr></tbody></table><h3>Reusable Transaction Catalog Capability</h3><table><thead><tr><th>Transaction</th><th>Send</th><th>Receive</th></tr></thead><tbody><tr><td>send-outpatient-visit-notification</td><td>No</td><td>Yes</td></tr><tr><td>send-admission-notification</td><td>No</td><td>Yes</td></tr><tr><td>send-birth-notification</td><td>No</td><td>No</td></tr><tr><td>send-discharge-notification</td><td>No</td><td>No</td></tr><tr><td>send-documents</td><td>No</td><td>No</td></tr><tr><td>query-for-documents</td><td>No</td><td>No</td></tr><tr><td>send-patient-update</td><td>No</td><td>No</td></tr><tr><td>send-workflow-status</td><td>Yes</td><td>Yes</td></tr></tbody></table><p>All eight catalog transactions are enumerated. Catalog membership is distinct from declared endpoint support: Send and Receive are asserted independently for each transaction. The current testing-endpoint declaration establishes receive support for send-outpatient-visit-notification and send-admission-notification, and establishes send-workflow-status in both directions; the remaining catalog entries are retained explicitly with unsupported directions until those endpoint capabilities are established.</p><h3>Metadata Packaging</h3><table><thead><tr><th>Representation</th><th>Send</th><th>Receive</th><th>Preferred</th></tr></thead><tbody><tr><td>Payload containing XDM Metadata</td><td>Yes</td><td>Yes</td><td>No</td></tr><tr><td>Payload containing FHIR Metadata</td><td>Yes</td><td>Yes</td><td>Yes</td></tr></tbody></table><h3>Correlated Response Packaging</h3><p>TX8 normally uses the same metadata packaging representation as the originating MaP transaction when that representation is supported for the response.</p><h3>Implementation Note</h3><p>The CapabilityStatement enumerates the complete Reusable Transaction Catalog. A false direction flag means that direction is not currently declared as supported by this endpoint; it does not remove the transaction from the catalog.</p></div>"
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><h2>MaP Endpoint Capability Statement — UNVERIFIED CAPABILITY CATALOG (ALL OFF)</h2><table><tbody><tr><th>Responsible Organization / Service</th><td>DirectTrust Payload Testing Tool</td></tr><tr><th>Direct Address</th><td>mapFramework@Direct3.DirectTrust.org</td></tr><tr><th>Supported Use Case</th><td>cc-maternal-health-birth</td></tr><tr><th>FHIR Version</th><td>R4 (4.0.1)</td></tr><tr><th>Last Updated</th><td>2026-10-14</td></tr></tbody></table><h3>Candidate Capabilities — Disabled Until Verified</h3><p>The entries below identify potential capabilities for future implementation and verification. Every Sender Actor, Receiver Actor, and Preferred flag defaults to No. Turn on a specific role only after it is implemented and verified with recorded evidence. TX6 remains catalogued as a native IHE query outside the Direct exchange scope; do not enable it as a Direct capability.</p><table><thead><tr><th>Transaction</th><th>Sender Actor</th><th>Receiver Actor</th></tr></thead><tbody><tr><td>send-outpatient-visit-notification</td><td>No</td><td>No</td></tr><tr><td>send-admission-notification</td><td>No</td><td>No</td></tr><tr><td>send-birth-notification</td><td>No</td><td>No</td></tr><tr><td>send-discharge-notification</td><td>No</td><td>No</td></tr><tr><td>send-documents</td><td>No</td><td>No</td></tr><tr><td>query-for-documents</td><td>No</td><td>No</td></tr><tr><td>send-patient-update</td><td>No</td><td>No</td></tr><tr><td>send-workflow-status</td><td>No</td><td>No</td></tr></tbody></table><h3>Metadata Packaging</h3><table><thead><tr><th>Representation</th><th>Sender Actor</th><th>Receiver Actor</th><th>Preferred</th></tr></thead><tbody><tr><td>Payload containing XDM Metadata</td><td>No</td><td>No</td><td>No</td></tr><tr><td>Payload containing FHIR Metadata</td><td>No</td><td>No</td><td>No</td></tr></tbody></table><h3>Workflow Activity Task Processing Policy</h3><p>No Workflow Activity Task processing capability is asserted by this baseline. Support for receiving, validating, and executing Task instructions must be assessed separately under the applicable Transaction Definition. TX8 support must not be inferred merely from Task presence.</p><h3>Implementation Note</h3><p>This DRAFT catalog is not a verified deployed CapabilityStatement. Do not use it for Directory discovery, live routing, or conformance claims. Before enabling any flag, document the test evidence, approving reviewer, and verification date. Keep preferred=false until a supported representation is verified and approved as preferred.</p></div>"
   },
   "extension": [
     {
@@ -44,7 +44,7 @@
         },
         {
           "url": "supportsReceive",
-          "valueBoolean": true
+          "valueBoolean": false
         }
       ]
     },
@@ -69,7 +69,7 @@
         },
         {
           "url": "supportsReceive",
-          "valueBoolean": true
+          "valueBoolean": false
         }
       ]
     },
@@ -215,11 +215,11 @@
         },
         {
           "url": "supportsSend",
-          "valueBoolean": true
+          "valueBoolean": false
         },
         {
           "url": "supportsReceive",
-          "valueBoolean": true
+          "valueBoolean": false
         }
       ]
     },
@@ -240,11 +240,11 @@
         },
         {
           "url": "supportsSend",
-          "valueBoolean": true
+          "valueBoolean": false
         },
         {
           "url": "supportsReceive",
-          "valueBoolean": true
+          "valueBoolean": false
         },
         {
           "url": "preferred",
@@ -269,32 +269,28 @@
         },
         {
           "url": "supportsSend",
-          "valueBoolean": true
+          "valueBoolean": false
         },
         {
           "url": "supportsReceive",
-          "valueBoolean": true
+          "valueBoolean": false
         },
         {
           "url": "preferred",
-          "valueBoolean": true
+          "valueBoolean": false
         }
       ]
-    },
-    {
-      "url": "http://objects.directtrust.org/standards/fhir/StructureDefinition/map-correlated-response-same-as-originating",
-      "valueBoolean": true
     }
   ],
   "url": "http://objects.directtrust.org/standards/fhir/CapabilityStatement/directtrust-map-payload-testing-tool",
-  "version": "1.3.0",
+  "version": "1.6.0-unverified-baseline",
   "name": "DirectTrustMaPPayloadTestingTool",
   "title": "DirectTrust Payload Testing Tool - MaP Endpoint Capability Statement",
-  "status": "active",
+  "status": "draft",
   "experimental": true,
-  "date": "2026-10-12",
+  "date": "2026-10-18",
   "publisher": "DirectTrust",
-  "description": "Endpoint-specific MaP CapabilityStatement for the DirectTrust Payload Testing Tool. The full Reusable Transaction Catalog is enumerated so transaction direction support is explicit for every catalog transaction. Transaction codes use the consolidated DirectTrust CodeSystem. Direction flags describe this endpoint’s declared support and are not inferred from local example generators.",
+  "description": "UNVERIFIED CAPABILITY CATALOG — ALL OPERATIONAL FLAGS OFF. This artifact enumerates potential MaP testing-tool transaction and metadata capabilities for future verification. Every supportsSend, supportsReceive, and preferred flag is false by default. Set an individual support flag to true only after implementation and evidence-based verification of that actor role and capability. Set preferred true only for a verified supported metadata representation after preference is approved. TX6 remains a native IHE query outside the Direct messaging scope and is not asserted as a Direct exchange capability. This draft is not a deployed endpoint capability declaration and SHALL NOT be used for live Directory discovery, routing, or conformance assertions.",
   "kind": "instance",
   "implementation": {
     "description": "DirectTrust Payload Testing Tool"
