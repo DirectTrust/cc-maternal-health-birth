@@ -8,7 +8,7 @@ The appendix applies the DirectTrust MAP Framework structured data packaging pat
 
 ## Core Packaging Pattern
 
-The FHIR Metadata option carries a ZIP containing a FHIR R4 Bundle with type collection in MIME Part 2 of the Direct message. This is an alternative representation of the structured payload, parallel to the IHE XDM package; it does not change the requested Shared Activity. The current SubmissionSet List SHALL conform to the DirectTrust MAP SubmissionSet List profile (http://objects.directtrust.org/standards/fhir/StructureDefinition/map-submissionset-list), regardless of whether a Workflow Activity Task is included. The TX8 originating-package identification snapshot uses its separate snapshot profile.
+The FHIR Metadata option carries a ZIP containing a FHIR R4 Bundle with type collection in MIME Part 2 of the Direct message. This is an alternative representation of the structured payload, parallel to the IHE XDM package; it does not change the requested Shared Activity. The current SubmissionSet List SHALL conform to the DirectTrust MAP SubmissionSet List profile is in the downloadable Vodabulary Package (objects.directtrust.org/standards/fhir/StructureDefinition/map-submissionset-list), regardless of whether a Workflow Activity Task is included. The TX8 originating-package identification snapshot uses its separate snapshot profile.
 
 Each workflow unit SHALL have exactly one current SubmissionSet List, carried as the first entry of its outer Collection Bundle. Other List information objects, including a TX8 identification snapshot or a patient Change List, are distinct from that organizing List.
 
