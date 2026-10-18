@@ -1,8 +1,4 @@
----
-title: "4.7 Metadata Representation Selection"
----
-
-# 4.7 Metadata Representation Selection
+## 4.7 Metadata Representation Selection
 
 For an originating transaction, select the Information Recipient, resolve an authorized Routing Target, obtain the endpoint’s CapabilityStatement, and confirm the use case, transaction, Receiver Actor capability, and supported exchange options. Select an applicable metadata representation before constructing and sending the Direct message. The Routing Target may be an intermediary or an organization’s use-case endpoint rather than the Information Recipient’s individual Direct address.
 

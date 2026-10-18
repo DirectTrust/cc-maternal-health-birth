@@ -1,8 +1,4 @@
----
-title: "4.13 Intended Workflow"
----
-
-# 4.13 Intended Workflow
+## 4.13 Intended Workflow
 
 For each supported inbound transaction, the Information Recipient SHALL describe the intended clinical or business workflow. Naming only a mailbox, queue, interface, transport endpoint, or Routing Target is insufficient. Capability declarations SHALL distinguish an intermediary’s routing or processing functions from authority to accept or reject the structured payload on behalf of the Information Recipient Organization.
 

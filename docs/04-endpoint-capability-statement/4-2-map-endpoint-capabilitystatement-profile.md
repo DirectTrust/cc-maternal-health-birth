@@ -1,8 +1,4 @@
----
-title: "4.2 MAP Endpoint CapabilityStatement Profile"
----
-
-# 4.2 MAP Endpoint CapabilityStatement Profile
+## 4.2 MAP Endpoint CapabilityStatement Profile
 
 The Endpoint Capability Statement SHALL be a FHIR R4 CapabilityStatement conforming to the MAP Endpoint CapabilityStatement Profile. CapabilityStatement.kind SHALL be instance, CapabilityStatement.fhirVersion SHALL be 4.0.1, and implementation SHALL identify the deployed implementation. The profile canonical URL is http://objects.directtrust.org/standards/fhir/StructureDefinition/map-endpoint-capabilitystatement.
 
