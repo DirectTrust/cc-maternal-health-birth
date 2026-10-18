@@ -1,16 +1,16 @@
----
-title: "TX8: send-workflow-status"
----
-
 # TX8: send-workflow-status
+
+**<span class="smallcaps">Reusable Transaction Definition</span>**
 
 ## Transaction Overview — WHY
 
-TX8 communicates the acceptance or rejection disposition of an originating structured payload. The following requirements define the report’s scope, separate transaction identity, and relationship to the common MAP framework.
+Reliable information exchange requires more than successful message delivery. Organizations also need to know whether information they sent or helped convey was accepted into the recipient's intended workflow or rejected because it could not be processed. Without this feedback, participants may incorrectly assume that delivered information is available for use, leaving processing failures undetected and potentially disrupting coordination across organizational boundaries.  
+  
+send-workflow-status recognizes that information exchange is a multi-participant activity and provides a standardized mechanism for making the outcome of that exchange observable and actionable to the participants involved. By communicating a correlated, machine-processable acceptance or rejection decision to the appropriate participants, the transaction supports shared situational awareness, timely resolution of processing failures, and accountability across the information exchange process.
 
 ### Purpose and Scope
 
-send-workflow-status reports the terminal acceptance or rejection of the originating MAP Structured Payload Package as a whole, including its Workflow Activity Task and all included DocumentEntries. This pattern does not report partial acceptance. TX8 is distinct from SMTP/Direct delivery status and from downstream clinical service fulfillment.
+send-workflow-status reports the terminal acceptance or rejection of the originating MAP Structured Payload Package as a whole, including any Workflow Activity Task present and all included DocumentEntries. This pattern does not report partial acceptance. TX8 is distinct from SMTP/Direct delivery status and from downstream clinical service fulfillment.
 
 Acceptance or rejection implies that the reporting actor received sufficient information to determine the package’s disposition. A separate receive Provenance record is not required in TX8. Unpacking does not itself establish acceptance. Package acceptance does not establish import or clinical review of every included object, or delivery of downstream services. An accepted referral package may be associated with a ServiceRequest that is later not fulfilled; that later outcome does not retroactively reject the package.
 
@@ -48,23 +48,23 @@ For XD, Task support SHALL be contained within the reporting Task. Provenance as
 
 #### Message-Level Payload Packaging Structure
 
-| **Message MIME-part** | **Conf.** | **Package object** | **Content MIME type** |
-|----|----|----|----|
-| MIME Part 1 | R | Human-readable Workflow Status | text/plain |
-| MIME Part 1 | O | Human-readable alternative(s) | text/html |
-| MIME Part 2 | R | Structured Payload Package — XDM ZIP or FHIR package | application/zip |
+| **Message MIME-part** | **Conf.** | **Package object**                                   | **Content MIME type** |
+|-----------------------|-----------|------------------------------------------------------|-----------------------|
+| MIME Part 1           | R         | Human-readable Workflow Status                       | text/plain            |
+| MIME Part 1           | O         | Human-readable alternative(s)                        | text/html             |
+| MIME Part 2           | R         | Structured Payload Package — XDM ZIP or FHIR package | application/zip       |
 
 #### Structured Data Package Contents
 
-| **Conf.** | **Package object** | **Content MIME type / representation** | **Requirement** |
-|----|----|----|----|
-| R | XDM/FHIR SubmissionSet/List | Selected metadata representation | Package-level metadata; apply Chapter 3. |
-| R | XDM/FHIR DocumentEntries/DocumentReferences | Selected metadata representation | Describe the included information objects. |
-| R | Originating package identification snapshot | application/fhir+xml or application/fhir+json; XD uses XML | Primary object; FHIR List with preserved originating identifiers and no membership. Each has its own metadata and report package membership. |
-| R | FHIR Task — Workflow Status and Workflow Activity | application/fhir+xml or application/fhir+json | Exactly one reporting Task, separate from the primary originating identification snapshot. |
-| R | Outcome Provenance Collection Bundle | application/fhir+xml or application/fhir+json | Required accept/reject assertion, coded performer, bundle-local agents, logical target matching the carried snapshot. |
-| R | Human-readable Workflow Status | text/plain | Identical copy of the MIME Part 1 text/plain file; coverage is specified in Section 2.3. |
-| C | Human-readable alternative(s) | text/html | Include identical copies of every HTML alternative supplied in MIME Part 1; HTML remains optional at message level. |
+| **Conf.** | **Package object**                                | **Content MIME type / representation**                     | **Requirement**                                                                                                                              |
+|-----------|---------------------------------------------------|------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------|
+| R         | XDM/FHIR SubmissionSet/List                       | Selected metadata representation                           | Package-level metadata; apply Chapter 3.                                                                                                     |
+| R         | XDM/FHIR DocumentEntries/DocumentReferences       | Selected metadata representation                           | Describe the included information objects.                                                                                                   |
+| R         | Originating package identification snapshot       | application/fhir+xml or application/fhir+json; XD uses XML | Primary object; FHIR List with preserved originating identifiers and no membership. Each has its own metadata and report package membership. |
+| R         | FHIR Task — Workflow Status and Workflow Activity | application/fhir+xml or application/fhir+json              | Exactly one reporting Task, separate from the primary originating identification snapshot.                                                   |
+| R         | Outcome Provenance Collection Bundle              | application/fhir+xml or application/fhir+json              | Required accept/reject assertion, coded performer, bundle-local agents, logical target matching the carried snapshot.                        |
+| R         | Human-readable Workflow Status                    | text/plain                                                 | Identical copy of the MIME Part 1 text/plain file; coverage is specified in Section 2.3.                                                     |
+| C         | Human-readable alternative(s)                     | text/html                                                  | Include identical copies of every HTML alternative supplied in MIME Part 1; HTML remains optional at message level.                          |
 
 ### Workflow Activity Task
 
@@ -72,23 +72,23 @@ Exactly one reporting FHIR Task SHALL represent send-workflow-status and communi
 
 TX8 Task.status describes the originating package’s disposition: completed means package acceptance; failed means package rejection. It does not describe success or failure of creating or transmitting the TX8 report. The existing single-Task and no-recursion rules remain applicable.
 
-| **Reported outcome** | **Task.status** | **Required Provenance Activity** | **Meaning** |
-|----|----|----|----|
-| Package Acceptance | completed | accept | The whole originating package was accepted into the intended workflow; receipt is implied; downstream service fulfillment is not asserted. |
-| Package Rejection | failed | reject | The whole originating package was rejected with a reason; sufficient receipt is implied; no partial acceptance is reported. |
+| **Reported outcome** | **Task.status** | **Required Provenance Activity** | **Meaning**                                                                                                                                |
+|----------------------|-----------------|----------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------|
+| Package Acceptance   | completed       | accept                           | The whole originating package was accepted into the intended workflow; receipt is implied; downstream service fulfillment is not asserted. |
+| Package Rejection    | failed          | reject                           | The whole originating package was rejected with a reason; sufficient receipt is implied; no partial acceptance is reported.                |
 
 The TX8 Task outcome, asserted Provenance Activity, and observable recipient behavior SHALL be consistent. A system asserting Package Rejection SHALL demonstrate that the rejected Payload files were not retained as accepted information. Security logs, transient queues, quarantine, audit records, and legally required transport evidence do not constitute retention as accepted information.
 
-| **FHIR Task concept** | **TX8 requirement** |
-|----|----|
-| Task.code | send-workflow-status |
-| Task.status | completed for Package Acceptance; failed for Package Rejection |
-| Task.identifier | Identifies the TX8 Transaction Instance / Workflow Activity as profiled by MAP |
-| Correlation | Explicit reference/identifier for the originating Transaction Instance |
-| Task.for | Patient identity when applicable |
-| Failure reason | Required when status=failed; Task.output.valueCodeableConcept uses MAPFailureReasonVS with Extensible binding and explanatory text. |
-| Successful-reporting request | SHALL NOT request another TX8 |
-| Workflow Status Update Endpoint | SHALL NOT be used to request another TX8 |
+| **FHIR Task concept**           | **TX8 requirement**                                                                                                                 |
+|---------------------------------|-------------------------------------------------------------------------------------------------------------------------------------|
+| Task.code                       | send-workflow-status                                                                                                                |
+| Task.status                     | completed for Package Acceptance; failed for Package Rejection                                                                      |
+| Task.identifier                 | Identifies the TX8 Transaction Instance / Workflow Activity as profiled by MAP                                                      |
+| Correlation                     | Explicit correlation to the originating SubmissionSet business identifier, whether or not an originating Task exists                |
+| Task.for                        | Patient identity when applicable                                                                                                    |
+| Failure reason                  | Required when status=failed; Task.output.valueCodeableConcept uses MAPFailureReasonVS with Extensible binding and explanatory text. |
+| Successful-reporting request    | SHALL NOT request another TX8                                                                                                       |
+| Workflow Status Update Endpoint | SHALL NOT be used to request another TX8                                                                                            |
 
 A failed TX8 SHALL carry a machine-processable failure reason in Task.output.valueCodeableConcept with an Extensible binding to MAPFailureReasonVS (http://objects.directtrust.org/standards/fhir/ValueSet/map-failure-reason). Shared codes use system http://objects.directtrust.org/standards/terminology/CodeSystem/DTCodeSystem. Task.output.type.text identifies “Framework failure reason”; it is descriptive output typing, not a new CodeSystem. Task.output.valueCodeableConcept.text and Task.statusReason.text SHALL explain the failure. Use an applicable ValueSet concept when one exists; an alternative coding is permitted when no concept adequately expresses the failure. Shared codes are sender-not-authorized, unsupported-use-case, payload-not-processable, patient-not-found, and context-not-found. Use the current DirectTrust Terminology and Artifacts package definitions.
 
@@ -98,7 +98,7 @@ Task Action Precept. Task.code.text SHALL make the requested TX8 activity explic
 
 Task.identifier and SubmissionSet.uniqueId SHALL identify the same logical TX8 Workflow Activity, as defined in Chapter 3.
 
-The originating Workflow Activity Task and SubmissionSet establish the logical Workflow Activity Identifier used for correlation. The TX8 Transaction Instance SHALL have its own transaction identity while explicitly referencing the originating Transaction Instance.
+The originating SubmissionSet business identifier establishes the logical Workflow Activity Identifier used for correlation, whether or not the originating Structured Payload Package includes a Workflow Activity Task. If the originating Task is present, its Task.identifier SHALL match the originating SubmissionSet business identifier. TX8 SHALL have its own distinct transaction and Workflow Activity identity and SHALL explicitly reference the originating Transaction Instance.
 
 #### Context Instance Association
 
@@ -108,17 +108,17 @@ TX8 SHALL identify the originating Transaction Instance and SHALL preserve/corre
 
 The TX8 Task SHALL explicitly correlate the reported outcome to the originating Transaction Instance. The TX8 Workflow Activity identifier identifies the status-reporting activity; it SHALL NOT replace the identifier of the originating activity. Apply Chapter 3 Sections 3.2.3 and 3.9.4.
 
-SubmissionSet.uniqueId and the originating Task.identifier carry the same Workflow Activity business identifier. TX8 preserves that original identifier for correlation while assigning its own Workflow Activity identifier to its return package and reporting Task.
+The originating SubmissionSet.uniqueId is the authoritative business identifier of the originating Workflow Activity. When the originating Task exists, its Task.identifier SHALL agree with that identifier. TX8 SHALL preserve the originating identifier for correlation and SHALL assign a distinct identifier to the TX8 SubmissionSet and its single reporting Task. The absence of an originating Task SHALL NOT cause a Task to be inferred or reconstructed.
 
 #### Workflow Status Instructions
 
-The TX8 Sender SHALL use the Workflow Status Update Endpoint set accumulated by the originating transaction. The set begins with at least one endpoint designated by the transaction-initiating system. Subsequent Sender Actors preserve existing endpoints and may add their own when they also need the eventual processing outcome.
+When the originating Structured Payload Package includes a Workflow Activity Task, the TX8 Sender SHALL use the applicable Workflow Status Update Endpoints conveyed and accumulated under that Task and the governing workflow instructions, subject to confirmation of eligible TX8 Receiver capability. When the originating package has no Workflow Activity Task and TX8 reporting is required, the sole eligible Workflow Status Update Endpoint is the Direct address established for Message Delivery Notifications, and only if its DirectTrust Directory-discoverable CapabilityStatement declares send-workflow-status Receiver support (supportsReceive=true). Directory SERV_DESC alone SHALL NOT establish that capability.
 
-TX8 SHALL be sent to each unique Workflow Status Update Endpoint accumulated for the originating Transaction Instance. Identical Direct addresses SHALL receive one TX8 delivery for the same reportable outcome. Multiple TX8 delivery instances to different endpoints represent delivery of one processing outcome, not multiple workflow outcomes.
+The TX8 Sender SHALL dispatch the same reportable outcome once to each distinct eligible Workflow Status Update Endpoint selected under Section 2.2.5. In the Task-present case, preserve and deduplicate applicable accumulated endpoints. In the Task-absent case, no fan-out or alternative return address is inferred: only the Directory-qualified Message Delivery Notification Direct address is eligible. If no eligible destination can be resolved, the reporting actor SHALL record the unsuccessful TX8 reporting obligation and SHALL NOT attempt TX8 dispatch. Failure to dispatch TX8 SHALL NOT, by itself, change the originating Transaction Instance disposition.
 
 TX8 is terminal Workflow Status reporting for an originating MAP transaction. A TX8 Workflow Activity Task SHALL NOT request package acceptance reporting and SHALL NOT identify Workflow Status Update Endpoints for the purpose of requesting another TX8. Direct final-destination delivery notification MAY still be requested for the TX8 Direct Message. No subsequent TX8 is generated to report processing of a TX8 Payload.
 
-The originating transaction’s Content Creator MAY select its initial Workflow Status Update Endpoint from supplied discovery information or explicit configuration and SHALL carry it in that originating Task. The TX8 Sender SHALL use the preserved accumulated endpoint set to deliver this outcome. TX8 itself SHALL NOT carry endpoint instructions requesting another TX8.
+When an originating Workflow Activity Task is present, the Content Creator SHALL include the applicable Workflow Status Update Endpoint instructions required by the initiating transaction; subsequent Sender Actors SHALL preserve applicable accumulated endpoints. When the originating Task is absent, a required TX8 report SHALL use only the Directory-qualified Message Delivery Notification address under Section 2.2.5. TX8 itself SHALL NOT carry instructions requesting another TX8.
 
 ### Human-Readable Content
 
@@ -144,16 +144,16 @@ TX8 applies the Chapter 3 canonical metadata model. SubmissionSet.purpose identi
 
 The SubmissionSet SHALL have exactly one author identifying the Organization initiating the requested Shared Activity, optionally identifying a person acting for that Organization. This package authorship is distinct from the contributing Organization identified by sourceId and from the authors of submitted artifacts. The Content Creator SHALL isolate the package author; clinical artifact authors SHALL be preserved.
 
-| **Metadata element** | **TX8 value / source** | **Requirement** |
-|----|----|----|
-| uniqueId | System-assigned | R; identifies this TX8 SubmissionSet. |
-| intendedRecipient | Authorized party intended to process this TX8 | R. Identify the receiving Organization or provider role, consistently with Task recipient. The accumulated Workflow Status Update Endpoint supplies delivery destination, not recipient identity; one delivery per unique endpoint. |
-| patientId | Patient identifier known by the TX8 Information Source to be appropriate to the TX8 Information Recipient or mutually agreed exchange patient-identifier domain | C. Populate only when known. Do not copy an unrelated local identifier from either side merely to populate patientId. |
-| Patient Info | Same representation and semantics as DocumentEntry.sourcePatientInfo; identifies the patient associated with the reported processing attempt | R when TX8 is patient-associated and the SubmissionSet pertains to one patient. Include even when patientId is known; for a patient-match failure, carry the Patient Info associated with the attempted match. |
-| purpose | send-workflow-status | R; aligns with TX8 Workflow Activity Task.code. |
-| contentTypeCode | List from http://hl7.org/fhir/resource-types | Classifies the primary identification snapshot; disposition is Task.status and Provenance.activity. |
-| referenceIdList | Applicable originating Context Instance identifiers | O/RE as applicable. |
-| sourceId | Organization Identity OID of the actor contributing the TX8 SubmissionSet | R. This is the TX8 Information Source, which is normally the Information Recipient of the originating transaction. |
+| **Metadata element** | **TX8 value / source**                                                                                                                                          | **Requirement**                                                                                                                                                                                                                     |
+|----------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| uniqueId             | System-assigned                                                                                                                                                 | R; identifies this TX8 SubmissionSet.                                                                                                                                                                                               |
+| intendedRecipient    | Authorized party intended to process this TX8                                                                                                                   | R. Identify the receiving Organization or provider role, consistently with Task recipient. The accumulated Workflow Status Update Endpoint supplies delivery destination, not recipient identity; one delivery per unique endpoint. |
+| patientId            | Patient identifier known by the TX8 Information Source to be appropriate to the TX8 Information Recipient or mutually agreed exchange patient-identifier domain | C. Populate only when known. Do not copy an unrelated local identifier from either side merely to populate patientId.                                                                                                               |
+| Patient Info         | Same representation and semantics as DocumentEntry.sourcePatientInfo; identifies the patient associated with the reported processing attempt                    | R when TX8 is patient-associated and the SubmissionSet pertains to one patient. Include even when patientId is known; for a patient-match failure, carry the Patient Info associated with the attempted match.                      |
+| purpose              | send-workflow-status                                                                                                                                            | R; aligns with TX8 Workflow Activity Task.code.                                                                                                                                                                                     |
+| contentTypeCode      | List from http://hl7.org/fhir/resource-types                                                                                                                    | Classifies the primary identification snapshot; disposition is Task.status and Provenance.activity.                                                                                                                                 |
+| referenceIdList      | Applicable originating Context Instance identifiers                                                                                                             | O/RE as applicable.                                                                                                                                                                                                                 |
+| sourceId             | Organization Identity OID of the actor contributing the TX8 SubmissionSet                                                                                       | R. This is the TX8 Information Source, which is normally the Information Recipient of the originating transaction.                                                                                                                  |
 
 #### Reverse-Direction Patient Identity
 
@@ -179,16 +179,16 @@ The reporting Task has its own DocumentEntry separate from the primary snapshot.
 
 The primary information object SHALL be a minimal FHIR R4 List snapshot. Use status=current, mode=snapshot, and no List.entry; narrative SHALL explain that original membership was omitted. Preserve original uniqueId, sourceId, submissionTime, purpose and applicable typed Context identifiers. Original entryUUID and title MAY be retained. Omit original patient, author, and intended-recipient references. Its local id/fullUrl SHALL differ from its preserved business identifier. Classify it as List using the resource-types CodeSystem. XD packages this same List as a separate application/fhir+xml file, not a second active RegistryPackage in METADATA.XML.
 
-| **Metadata element** | **TX8 requirement** |
-|----|----|
-| mimeType | application/fhir+xml or application/fhir+json; use the representation selected for the package. |
-| classCode | List from http://hl7.org/fhir/resource-types; XD uses its OID 2.16.840.1.113883.4.642.4.2. |
-| typeCode | List; this classifies the identification snapshot, not the outcome. |
-| patientId | C. Identifier known by the TX8 Information Source to be appropriate to the TX8 Information Recipient or mutually agreed exchange domain; do not mechanically copy from the originating transaction. |
-| creationTime | TX8 identification extract creation time; preserved original submissionTime remains List.date. |
-| sourceId | TX8 SubmissionSet Source |
-| sourcePatientId | C/RE. TX8 Information Source local patient identifier when a local identity was established; SHALL NOT be manufactured when patient matching failed. |
-| sourcePatientInfo | RE when available. Patient demographics associated with the TX8 source patient identity using established XD semantics. |
+| **Metadata element** | **TX8 requirement**                                                                                                                                                                                 |
+|----------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| mimeType             | application/fhir+xml or application/fhir+json; use the representation selected for the package.                                                                                                     |
+| classCode            | List from http://hl7.org/fhir/resource-types; XD uses its OID 2.16.840.1.113883.4.642.4.2.                                                                                                          |
+| typeCode             | List; this classifies the identification snapshot, not the outcome.                                                                                                                                 |
+| patientId            | C. Identifier known by the TX8 Information Source to be appropriate to the TX8 Information Recipient or mutually agreed exchange domain; do not mechanically copy from the originating transaction. |
+| creationTime         | TX8 identification extract creation time; preserved original submissionTime remains List.date.                                                                                                      |
+| sourceId             | TX8 SubmissionSet Source                                                                                                                                                                            |
+| sourcePatientId      | C/RE. TX8 Information Source local patient identifier when a local identity was established; SHALL NOT be manufactured when patient matching failed.                                                |
+| sourcePatientInfo    | RE when available. Patient demographics associated with the TX8 source patient identity using established XD semantics.                                                                             |
 
 ### Provenance DocumentEntry(s)
 
@@ -244,32 +244,32 @@ The Content Creator, Message Sender, Message Receiver, and Content Consumer perf
 
 ### Sender Actor
 
-The Sender Actor combines Content Creator and Message Sender functions. It creates and preserves the information objects, metadata, Context identifiers and applicable Provenance, then packages and transmits the message.
+The Sender Actor combines Content Creator and Message Sender functions. It creates and preserves the TX8 reporting objects, metadata, originating correlation identifiers, Context identifiers and required Provenance, and transmits to the eligible Workflow Status Update Endpoint(s) selected under Section 2.2.5. It SHALL verify TX8 Receiver capability using the Directory-discoverable CapabilityStatement and SHALL record an unsuccessful reporting obligation without dispatch if no eligible destination exists.
 
-| **Actor** | **Requirement category** | **Normative requirement** |
-|----|----|----|
-| TX8 Content Creator | Package Acceptance | SHALL create Task.status=completed plus Provenance activity accept when successful reporting is required; MAY do so when successful reporting was not requested. |
-| TX8 Content Creator | Package Rejection | SHALL create Task.status=failed, an applicable failure reason, and Provenance activity reject for a defined reportable failure. |
-| TX8 Content Creator | Consistency | SHALL ensure Task outcome, Provenance Activity, and represented observable behavior are semantically consistent. |
+| **Actor**           | **Requirement category** | **Normative requirement**                                                                                                                                        |
+|---------------------|--------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| TX8 Content Creator | Package Acceptance       | SHALL create Task.status=completed plus Provenance activity accept when successful reporting is required; MAY do so when successful reporting was not requested. |
+| TX8 Content Creator | Package Rejection        | SHALL create Task.status=failed, an applicable failure reason, and Provenance activity reject for a defined reportable failure.                                  |
+| TX8 Content Creator | Consistency              | SHALL ensure Task outcome, Provenance Activity, and represented observable behavior are semantically consistent.                                                 |
 
-| **Actor** | **Requirement category** | **Normative requirement** |
-|----|----|----|
-| TX8 Message Sender | Endpoint fan-out | SHALL transmit the same reportable outcome to each unique Workflow Status Update Endpoint accumulated for the originating Transaction Instance. |
-| TX8 Message Sender | No recursion | SHALL NOT request TX8 Workflow Status for TX8 itself. |
+| **Actor**          | **Requirement category** | **Normative requirement**                                                                                                                                                                                                                                                                                                        |
+|--------------------|--------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| TX8 Message Sender | Endpoint fan-out         | SHALL transmit the same outcome once to each eligible, deduplicated endpoint when the originating Task exists; without that Task, SHALL use only the Directory-qualified Message Delivery Notification address. SHALL NOT dispatch without an eligible TX8 Receiver destination; SHALL record unsuccessful reporting separately. |
+| TX8 Message Sender | No recursion             | SHALL NOT request TX8 Workflow Status for TX8 itself.                                                                                                                                                                                                                                                                            |
 
 ### Receiver Actor
 
-The Receiver Actor combines Message Receiver and Content Consumer functions. It validates receipt, resolves required patient and Context associations, determines whole-package disposition, and causes required TX8 reporting.
+The TX8 Receiver Actor combines Message Receiver and Content Consumer functions. It receives and validates the TX8 report, correlates its terminal assertion with the originating SubmissionSet business identifier and applicable Context, and makes the outcome available to the appropriate participant. The actor that received the originating transaction determines its disposition and causes required TX8 reporting; this responsibility is distinct from the Receiver Actor processing TX8 itself.
 
-| **Actor** | **Requirement category** | **Normative requirement** |
-|----|----|----|
-| TX8 Message Receiver | Receipt | SHALL receive and validate TX8 and make the terminal outcome available to the appropriate Content Consumer. |
+| **Actor**            | **Requirement category** | **Normative requirement**                                                                                   |
+|----------------------|--------------------------|-------------------------------------------------------------------------------------------------------------|
+| TX8 Message Receiver | Receipt                  | SHALL receive and validate TX8 and make the terminal outcome available to the appropriate Content Consumer. |
 
-| **Actor** | **Requirement category** | **Normative requirement** |
-|----|----|----|
-| Content Consumer of originating transaction | Outcome determination | SHALL determine whether the originating Payload was accepted into the intended workflow or encountered a reportable rejection. |
-| TX8 Content Consumer | Correlation | SHALL correlate the reported outcome to the originating Transaction Instance and applicable Context Instance(s). |
-| Originating system | Expected TX8 monitoring | SHALL close originating tracking as outcome unconfirmed and requiring follow-up after the applicable interval; a late TX8 resolves the original outcome while preserving timeout history. Timeout is not rejection, acceptance, or proof of non-receipt. |
+| **Actor**                                   | **Requirement category** | **Normative requirement**                                                                                                                                                                                                                                |
+|---------------------------------------------|--------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Content Consumer of originating transaction | Outcome determination    | SHALL determine whether the originating Payload was accepted into the intended workflow or encountered a reportable rejection.                                                                                                                           |
+| TX8 Content Consumer                        | Correlation              | SHALL correlate to the originating SubmissionSet business identifier and applicable Context Instance(s), irrespective of whether the originating package included a Task.                                                                                |
+| Originating system                          | Expected TX8 monitoring  | SHALL close originating tracking as outcome unconfirmed and requiring follow-up after the applicable interval; a late TX8 resolves the original outcome while preserving timeout history. Timeout is not rejection, acceptance, or proof of non-receipt. |
 
 ## Transaction-Specific Processing — WHAT IS SPECIAL
 
@@ -281,39 +281,39 @@ The following common anomaly handling specializes the original Metadata and Payl
 
 A defect in one included object may cause rejection of the entire package. The rejection reason SHOULD identify the affected object when known. Whole-package rejection does not assert that every document was individually evaluated or found defective.
 
-<table style="width:97%;">
+<table>
 <colgroup>
-<col style="width: 25%" />
-<col style="width: 70%" />
+<col style="width: 26%" />
+<col style="width: 73%" />
 </colgroup>
 <thead>
-<tr>
+<tr class="header">
 <th><strong>Anomaly / initial reason</strong></th>
 <th><strong>Processing decision and reporting guidance</strong></th>
 </tr>
 </thead>
 <tbody>
-<tr>
+<tr class="odd">
 <td>Unauthorized sending entity<br />
 sender-not-authorized</td>
 <td>Determine whether the entity is authorized to participate in the declared use case. If lack of authorization prevents processing, report rejection. Explain the applicable authorization process and reference the endpoint capability declaration when available and appropriate.</td>
 </tr>
-<tr>
+<tr class="even">
 <td>Unsupported declared use case<br />
 unsupported-use-case</td>
 <td>Determine whether the endpoint supports the declared use case and requested transaction. If it cannot perform the required activity, report rejection and explain the capability mismatch.</td>
 </tr>
-<tr>
+<tr class="odd">
 <td>Noncompliant or unprocessable Payload<br />
 payload-not-processable</td>
 <td>Determine whether the package, metadata, required objects, and content satisfy the initiating transaction and declared endpoint capabilities. If a defect prevents successful processing, report rejection and identify the unmet requirement or processing limitation.</td>
 </tr>
-<tr>
+<tr class="even">
 <td>Patient cannot be resolved<br />
 patient-not-found</td>
 <td>Evaluate patient resolution against the initiating transaction. A previously unknown patient is not automatically a failure when the workflow permits establishing that patient. If the required identity cannot be resolved or established and processing cannot succeed, report rejection; explain available registration or identity-resolution steps where appropriate. Do not manufacture patient identifiers.</td>
 </tr>
-<tr>
+<tr class="odd">
 <td>Required established Context cannot be resolved<br />
 context-not-found</td>
 <td>Evaluate whether the supplied established Context is required to perform the initiating activity. If it cannot be resolved and this prevents processing, report rejection and identify the unresolved Context. Absence of an optional Context identifier alone is not a failure; do not create a clinical Context merely to report status.</td>
@@ -325,7 +325,7 @@ The reason codes above are defined by the shared MAP Failure Reason CodeSystem a
 
 ### Intermediary Terminal Failure
 
-When an Intermediary encounters a terminal processing or routing failure that prevents the originating transaction from reaching the intended downstream workflow, that Intermediary becomes the actor determining the reportable failure. It SHALL generate the required failed TX8 to the accumulated Workflow Status Update Endpoint set and SHALL assert the applicable reject Provenance at that processing boundary.
+When an Intermediary is authorized to determine a terminal processing or routing failure that prevents the originating transaction from reaching the intended downstream workflow, it SHALL produce a failed TX8 when the applicable originating transaction or framework rules require reporting. It SHALL assert reject Provenance at that processing boundary and resolve the TX8 destination using the Task-present or Task-absent routing rules in Section 2.2.5. If no eligible destination exists, it SHALL record the reporting failure without dispatch; the originating processing outcome remains independently determined.
 
 ### TX8 Terminates Workflow Status Reporting
 
@@ -333,13 +333,13 @@ Apply the no-recursion requirements in Section 2.2.4. TX8 reports one terminal o
 
 ### Expected TX8 Response and Follow-Up
 
-When TX8 reporting is requested or otherwise required, apply the reporting interval in Chapter 3. The interval begins when the last Sender Actor within the Information Source Organization’s scope of control sends to a Routing Target associated with the Information Recipient Organization. Recipient-side routing, evaluation, and return reporting are included; additional recipient-side hops do not restart the clock. The default interval is 60 minutes unless an explicit use-case or Information Recipient-specific interval is established. If no correlated TX8 is received within the applicable reporting interval, the originating system SHALL close its transaction tracking context with the outcome unconfirmed and mark it as requiring follow-up. This administrative closure does not establish acceptance, rejection, or non-receipt and does not cancel required reporting. A late TX8 SHALL be correlated to the original transaction and used to resolve its recorded unconfirmed outcome; it SHALL NOT create a new originating Transaction Instance or erase the timeout and follow-up history. Missing or unreadable correlation information or a missing return endpoint may prevent a correlated report; the timeout does not identify the cause or require automatic retransmission. This rule applies to the expected report about an originating transaction, not to a report about TX8 itself.
+When TX8 reporting is expected because it was requested or otherwise required, apply the reporting interval in Chapter 3. The interval begins when the last Sender Actor within the Information Source Organization’s scope of control sends to a Routing Target associated with the Information Recipient Organization. Recipient-side routing, evaluation, and return reporting are included; additional recipient-side hops do not restart the clock. The default interval is 60 minutes unless an explicit use-case or Information Recipient-specific interval is established. If no correlated TX8 is received within the applicable reporting interval, the originating system SHALL close its transaction tracking context with the outcome unconfirmed and mark it as requiring follow-up. This administrative closure does not establish acceptance, rejection, or non-receipt and does not cancel required reporting. A late TX8 SHALL be correlated to the original transaction and used to resolve its recorded unconfirmed outcome; it SHALL NOT create a new originating Transaction Instance or erase the timeout and follow-up history. Missing or unreadable correlation information or a missing return endpoint may prevent a correlated report; the timeout does not identify the cause or require automatic retransmission. This rule applies to the expected report about an originating transaction, not to a report about TX8 itself. When no eligible TX8 destination can be resolved, the reporting actor SHALL record the unsuccessful reporting obligation and SHALL NOT attempt dispatch. This reporting failure does not change the independently determined disposition of the originating package.
 
 ## Relevant Examples — SHOW ME
 
-For an illustrative originating TX1 processing attempt, the alternative successful outcome reports Task.status=completed with Provenance activity accept. The alternative rejection reports Task.status=failed, failure reason patient-not-found, and Provenance activity reject. Both assertions target the same originating SubmissionSet/List identifier. These are alternative whole-package outcomes, not sequential status updates.
+The following illustrations represent alternative whole-package outcomes, not sequential updates. They cover both an originating package with a Workflow Activity Task and an originating package without one. In each case, correlate TX8 to the originating SubmissionSet business identifier, not to the existence of an originating Task. Package Acceptance uses Task.status=completed and Provenance activity accept; Package Rejection uses Task.status=failed, an applicable failure reason, and Provenance activity reject.
 
-The following standalone illustrations show equivalent XD and FHIR representations of package acceptance and Package Rejection. They are not references to complete sample archives.
+The XD and FHIR illustrations below describe equivalent representations of acceptance and rejection, not complete downloadable archives. Task-present case: an initiating TX1 includes a Task whose identifier agrees with the originating SubmissionSet business identifier; eligible accumulated status endpoints govern return routing. Task-absent case: an initiating TX2 or TX4 includes no Task; if TX8 reporting is required, the Message Delivery Notification Direct address is the sole eligible return endpoint, and only when its Directory-discoverable CapabilityStatement declares TX8 Receiver support. If capability is absent or cannot be discovered, record the reporting failure and do not dispatch. The TX8 report in either case contains exactly one TX8 reporting Task, its own SubmissionSet, the originating-package identification snapshot, and required outcome Provenance.
 
 ### Package Acceptance — XD Metadata
 

@@ -1,8 +1,6 @@
----
-title: "TX6: query-for-documents"
----
+Reusable Transaction Definition
 
-# TX6: query-for-documents
+cc-maternal-health-birth via the Direct Standard® \| Updated 2026-10-14 \| TX6 revision v6
 
 ## 1 Transaction Overview — WHY
 
@@ -12,9 +10,9 @@ query-for-documents discovers available clinical documents for a resolved patien
 
 A Query Initiator SHALL select one query option per request: one precise Document Type, or one declared Document Category. Query Responder classification knowledge supports category discovery without requiring the initiator to enumerate every document type.
 
-| **Query option** | **Selector** | **Matching meaning** |
-|----|----|----|
-| Request by Type | \$XDSDocumentEntryTypeCode | One precise document type; exact semantic match. |
+| **Query option**    | **Selector**                | **Matching meaning**                                                                 |
+|---------------------|-----------------------------|--------------------------------------------------------------------------------------|
+| Request by Type     | \$XDSDocumentEntryTypeCode  | One precise document type; exact semantic match.                                     |
 | Request by Category | \$XDSDocumentEntryClassCode | One declared category under the exchange policy; retain each result’s specific type. |
 
 ### 1.2 Transaction Identity
@@ -23,7 +21,7 @@ The canonical reusable activity code is query-for-documents; TX6 is the cc-mater
 
 ### 1.3 Framework Relationship
 
-TX6 is a native query interaction, distinct from the Direct message-carrying activities in Chapter 3. Query Initiator and Query Responder roles apply; returned document author and source identities remain those of the documents. Direct MIME packaging, a Workflow Activity Task, MAP SubmissionSet creation and TX8 reporting are not requirements of this ITI-18 invocation. A separately initiated MAP document-send activity, such as TX5 after discovery, has its own identifiers, payload, actors and applicable TX8 reporting.
+TX6 is a native IHE document-query interaction, not a MAP Direct message-carrying transaction. Query Initiator and Query Responder roles apply; returned document author and source identities remain those of the documents. The Chapter 3 Direct MIME package, Workflow Activity Task, MAP SubmissionSet, and TX8 reporting provisions do not apply to the native ITI-18 invocation. If discovered documents are subsequently communicated using another independently defined transaction, that transaction follows its own requirements.
 
 ## 2 Message and Payload Requirements — WHAT
 
@@ -31,12 +29,12 @@ TX6 is a native query interaction, distinct from the Direct message-carrying act
 
 Apply the applicable IHE query request/response and security requirements. FindDocuments returns metadata or object references according to returnType; it does not return the clinical document files. LeafClass is preferred when complete metadata is needed for selection. ObjectRef remains available when permitted by the selected IHE profile.
 
-| **Item** | **TX6 constraint** |
-|----|----|
-| IHE transaction | Registry Stored Query \[ITI-18\], FindDocuments. |
-| returnType | LeafClass for full DocumentEntry metadata; ObjectRef under base-profile rules. |
-| Patient scope | One patient identifier in the registry/exchange domain, with assigning authority. A sender-local identifier is insufficient unless valid in that domain. |
-| Type/category selection | Exactly one of the two selectors in this definition. Additional compatible FindDocuments filters may constrain the results. |
+| **Item**                | **TX6 constraint**                                                                                                                                       |
+|-------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
+| IHE transaction         | Registry Stored Query \[ITI-18\], FindDocuments.                                                                                                         |
+| returnType              | LeafClass for full DocumentEntry metadata; ObjectRef under base-profile rules.                                                                           |
+| Patient scope           | One patient identifier in the registry/exchange domain, with assigning authority. A sender-local identifier is insufficient unless valid in that domain. |
+| Type/category selection | Exactly one of the two selectors in this definition. Additional compatible FindDocuments filters may constrain the results.                              |
 
 ### 2.2 Workflow Activity Task and Status Instructions
 
@@ -48,19 +46,19 @@ A user-facing or diagnostic query view SHOULD show the patient identifier and au
 
 ### 2.4 Direct Message and Transport Requirements
 
-Intentionally blank for the native query. Direct transport headers, XD Subject conventions and multipart communication copies apply only to a separately defined MAP message activity.
+Intentionally blank for this native IHE query. No Direct message, MAP structured payload package, XD Subject convention, or multipart human-readable communication is created by the ITI-18 interaction.
 
 ## 3 XD Query Metadata Guidance — HOW
 
 ### 3.1 Query Parameters
 
-| **Conf** | **Parameter** | **Value and rule** |
-|----|----|----|
-| R | \$XDSDocumentEntryPatientId | Registry-domain patient identifier in the IHE CX form. |
-| R | \$XDSDocumentEntryStatus | Approved by default; another valid availability status only under an explicit query purpose. |
-| C | \$XDSDocumentEntryTypeCode | One precise standardized document type for Request by Type; omit the category selector. |
-| C | \$XDSDocumentEntryClassCode | One declared category for Request by Category; omit the type selector. |
-| O | Other FindDocuments filters | As permitted by ITI-18; do not alter the selected type/category meaning. |
+| **Conf** | **Parameter**               | **Value and rule**                                                                           |
+|----------|-----------------------------|----------------------------------------------------------------------------------------------|
+| R        | \$XDSDocumentEntryPatientId | Registry-domain patient identifier in the IHE CX form.                                       |
+| R        | \$XDSDocumentEntryStatus    | Approved by default; another valid availability status only under an explicit query purpose. |
+| C        | \$XDSDocumentEntryTypeCode  | One precise standardized document type for Request by Type; omit the category selector.      |
+| C        | \$XDSDocumentEntryClassCode | One declared category for Request by Category; omit the type selector.                       |
+| O        | Other FindDocuments filters | As permitted by ITI-18; do not alter the selected type/category meaning.                     |
 
 ### 3.2 Coded Values and Classification Policy
 
@@ -86,12 +84,12 @@ The initiator SHALL request one supported category. The responder SHALL evaluate
 
 The response SHALL preserve document instance/retrieval identities, availability status and applicable authored/source metadata under the selected IHE profile. Registry availability status does not report clinical completeness, legal authentication, Direct delivery or MAP acceptance. A successful query with no matching documents is a valid empty result, not proof of an unknown patient or package rejection.
 
-| **Metadata concept** | **Type query** | **Category query** |
-|----|----|----|
-| typeCode | Specific requested type or exact equivalent. | Specific type of each discovered document; may differ across results. |
-| classCode | Applicable registry classification. | Applicable classification under the declared query policy. |
-| uniqueId and retrieval identity | Preserve the document instance and required repository/community information. | Same requirements; use these values for separate retrieval. |
-| Patient and source information | Maintain registry patient identity and source provenance. | Same requirements; category membership does not change the patient or source. |
+| **Metadata concept**            | **Type query**                                                                | **Category query**                                                            |
+|---------------------------------|-------------------------------------------------------------------------------|-------------------------------------------------------------------------------|
+| typeCode                        | Specific requested type or exact equivalent.                                  | Specific type of each discovered document; may differ across results.         |
+| classCode                       | Applicable registry classification.                                           | Applicable classification under the declared query policy.                    |
+| uniqueId and retrieval identity | Preserve the document instance and required repository/community information. | Same requirements; use these values for separate retrieval.                   |
+| Patient and source information  | Maintain registry patient identity and source provenance.                     | Same requirements; category membership does not change the patient or source. |
 
 ## 4 FHIR Metadata Guidance — HOW
 
@@ -101,11 +99,11 @@ No FHIR-native query API is defined by this TX6 revision. Metadata crosswalks do
 
 ### 4.2 Information Classification
 
-| **Concept** | **XD metadata** | **Clinical representation** |
-|----|----|----|
-| Document Type | DocumentEntry.typeCode | CDA ClinicalDocument.code; FHIR Composition.type and DocumentReference.type. |
-| Document Category | Applicable DocumentEntry.classCode under exchange policy | Repeatable CDA sdtc:category or FHIR DocumentReference.category when applicable. |
-| Template or profile | Known formatCode and profile-specific metadata | CDA templateId or FHIR meta.profile; do not substitute for semantic type/category. |
+| **Concept**         | **XD metadata**                                          | **Clinical representation**                                                        |
+|---------------------|----------------------------------------------------------|------------------------------------------------------------------------------------|
+| Document Type       | DocumentEntry.typeCode                                   | CDA ClinicalDocument.code; FHIR Composition.type and DocumentReference.type.       |
+| Document Category   | Applicable DocumentEntry.classCode under exchange policy | Repeatable CDA sdtc:category or FHIR DocumentReference.category when applicable.   |
+| Template or profile | Known formatCode and profile-specific metadata           | CDA templateId or FHIR meta.profile; do not substitute for semantic type/category. |
 
 Preserve the retrieved artifact’s clinical snapshot and document identity. A later CDA assembly may have a distinct Assembler/Composer time under Chapter 3; query or retrieval time does not replace original clinical effective/service time or prove a new clinical document was authored.
 
@@ -115,12 +113,12 @@ Intentionally blank. No additional Context IG query representation is specified 
 
 ## 6 Technical Actor Functional Requirements — WHO DOES WHAT
 
-| **Actor** | **Requirement** |
-|----|----|
-| Query Initiator / Document Consumer | SHALL resolve the registry-domain patient identity, select one supported query option, apply authorized filters, and evaluate the native response. |
+| **Actor**                           | **Requirement**                                                                                                                                               |
+|-------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Query Initiator / Document Consumer | SHALL resolve the registry-domain patient identity, select one supported query option, apply authorized filters, and evaluate the native response.            |
 | Query Responder / Document Registry | SHALL process supported parameters and declared classification semantics, return distinct matching metadata and preserve exact type and retrieval identities. |
-| Initiating / Responding Gateway | When used, SHALL apply the selected federated document-sharing profile; this definition does not relabel ITI-38 as ITI-18 or alter gateway requirements. |
-| Document retrieval participant | SHALL retrieve selected content through the applicable separate retrieval transaction and preserve document identity and clinical snapshot. |
+| Initiating / Responding Gateway     | When used, SHALL apply the selected federated document-sharing profile; this definition does not relabel ITI-38 as ITI-18 or alter gateway requirements.      |
+| Document retrieval participant      | SHALL retrieve selected content through the applicable separate retrieval transaction and preserve document identity and clinical snapshot.                   |
 
 ## 7 Transaction Specific Processing — WHAT IS SPECIAL
 
@@ -138,10 +136,10 @@ Category-index/query-adaptation policy, the full supported category vocabulary, 
 
 Request LOINC 57055-6 Antepartum Summary through the type selector. Other maternal document types do not satisfy this query merely because they concern pregnancy.
 
-\<rim:Slot name="\$XDSDocumentEntryTypeCode"\>\
-\<rim:ValueList\>\
-\<rim:Value\>('57055-6^^2.16.840.1.113883.6.1')\</rim:Value\>\
-\</rim:ValueList\>\
+\<rim:Slot name="\$XDSDocumentEntryTypeCode"\>  
+\<rim:ValueList\>  
+\<rim:Value\>('57055-6^^2.16.840.1.113883.6.1')\</rim:Value\>  
+\</rim:ValueList\>  
 \</rim:Slot\>
 
 ### 8.2 Discharge Summary Category
@@ -158,25 +156,25 @@ A service that explicitly supports Pregnancy History category discovery may acce
 
 ### 8.4 FindDocuments Skeleton
 
-\<query:AdhocQueryRequest\
-xmlns:query="urn:oasis:names:tc:ebxml-regrep:xsd:query:3.0"\
-xmlns:rim="urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0"\>\
-\<query:ResponseOption returnComposedObjects="true" returnType="LeafClass"/\>\
-\<rim:AdhocQuery id="urn:uuid:14d4debf-8f97-4251-9a74-a90016b0af0d"\>\
-\<rim:Slot name="\$XDSDocumentEntryPatientId"\>\
-\<rim:ValueList\>\<rim:Value\>'\[patient CX with authority\]'\</rim:Value\>\</rim:ValueList\>\
-\</rim:Slot\>\
-\<rim:Slot name="\$XDSDocumentEntryTypeCode"\>\
-\<rim:ValueList\>\<rim:Value\>('57055-6^^2.16.840.1.113883.6.1')\</rim:Value\>\</rim:ValueList\>\
-\</rim:Slot\>\
-\<rim:Slot name="\$XDSDocumentEntryStatus"\>\
-\<rim:ValueList\>\<rim:Value\>('urn:oasis:names:tc:ebxml-regrep:StatusType:Approved')\</rim:Value\>\</rim:ValueList\>\
-\</rim:Slot\>\
-\</rim:AdhocQuery\>\
+\<query:AdhocQueryRequest  
+xmlns:query="urn:oasis:names:tc:ebxml-regrep:xsd:query:3.0"  
+xmlns:rim="urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0"\>  
+\<query:ResponseOption returnComposedObjects="true" returnType="LeafClass"/\>  
+\<rim:AdhocQuery id="urn:uuid:14d4debf-8f97-4251-9a74-a90016b0af0d"\>  
+\<rim:Slot name="\$XDSDocumentEntryPatientId"\>  
+\<rim:ValueList\>\<rim:Value\>'\[patient CX with authority\]'\</rim:Value\>\</rim:ValueList\>  
+\</rim:Slot\>  
+\<rim:Slot name="\$XDSDocumentEntryTypeCode"\>  
+\<rim:ValueList\>\<rim:Value\>('57055-6^^2.16.840.1.113883.6.1')\</rim:Value\>\</rim:ValueList\>  
+\</rim:Slot\>  
+\<rim:Slot name="\$XDSDocumentEntryStatus"\>  
+\<rim:ValueList\>\<rim:Value\>('urn:oasis:names:tc:ebxml-regrep:StatusType:Approved')\</rim:Value\>\</rim:ValueList\>  
+\</rim:Slot\>  
+\</rim:AdhocQuery\>  
 \</query:AdhocQueryRequest\>
 
 For Request by Category, replace the type Slot with the one requested classCode Slot; do not include both. The patient value is illustrative and must be replaced with an actual registry-domain CX identifier.
 
 ### 8.5 Standards and Alignment References
 
-IHE ITI Technical Framework, ITI-18: https://profiles.ihe.net/ITI/TF/Volume2/ITI-18.html. IHE document metadata: https://profiles.ihe.net/ITI/TF/Volume3/ch-4.2.html. LOINC 10162-6: https://loinc.org/10162-6. Local alignment sources: Chapter 3 v54, Appendix D v11, and TX8 Definition v10, all dated 2026-10-12.
+IHE ITI Technical Framework, ITI-18: https://profiles.ihe.net/ITI/TF/Volume2/ITI-18.html. IHE document metadata: https://profiles.ihe.net/ITI/TF/Volume3/ch-4.2.html. LOINC 10162-6: https://loinc.org/10162-6. Current local alignment references: Chapter 3 v58 and Appendix D v14 (2026-10-14), and TX8 v12 for the distinction between native IHE query outcomes and separate MAP workflow-status reporting. These references do not import MAP packaging or TX8 requirements into TX6.
