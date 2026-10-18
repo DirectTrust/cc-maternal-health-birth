@@ -1,6 +1,6 @@
 ## 4.2 MAP Endpoint CapabilityStatement Profile
 
-The Endpoint Capability Statement SHALL be a FHIR R4 CapabilityStatement conforming to the MAP Endpoint CapabilityStatement Profile. CapabilityStatement.kind SHALL be instance, CapabilityStatement.fhirVersion SHALL be 4.0.1, and implementation SHALL identify the deployed implementation. The profile canonical URL is http://objects.directtrust.org/standards/fhir/StructureDefinition/map-endpoint-capabilitystatement.
+The Endpoint Capability Statement SHALL be a FHIR R4 CapabilityStatement conforming to the MAP Endpoint CapabilityStatement Profile. CapabilityStatement.kind SHALL be instance, CapabilityStatement.fhirVersion SHALL be 4.0.1, and implementation SHALL identify the deployed implementation. The profile name is map-endpoint-capabilitystatement and it can be found in the structureDefinitions artifact folder in the downloadble vocabulary package.
 
 The profile uses CapabilityStatement.messaging as the FHIR R4 container for endpoint declarations supporting Direct-based exchange. This use does not assert that Direct messages follow the FHIR messaging protocol. MAP extensions declare use-case support, transaction capabilities, metadata representation support and preference, correlated-response behavior, identifier capabilities, terminology capabilities, and intended workflow.
 
