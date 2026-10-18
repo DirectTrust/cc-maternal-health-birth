@@ -24,7 +24,7 @@ Message Sender and Message Receiver retain their functional responsibilities def
 
 | **Technical Actor Role** | **Common responsibility** |
 |----|----|
-| Content Creator | Creates at least the minimum Information Source information needed to initiate the transaction. Completes preparation of information objects, metadata, Task, Provenance, and structured payload together with the Message Sender; internal responsibilities MAY be divided according to the implementation. |
+| Content Creator | Creates at least the minimum Information Source information needed to initiate the transaction. Completes preparation of information objects, metadata, any applicable Task, Provenance, and structured payload together with the Message Sender; internal responsibilities MAY be divided according to the implementation. |
 | Message Sender | Completes preparation and packaging responsibilities assigned within the grouped Sender Actor, constructs and transmits the Direct message to the selected Routing Target. |
 | Message Receiver | Takes delivery of and validates the Direct message and makes its payload, metadata, message controls and transport evidence available for receiver-side processing. |
 | Content Consumer | Receives the structured payload, evaluates its acceptance or rejection into the intended workflow, and performs subsequent processing of information objects according to the applicable requirements. |

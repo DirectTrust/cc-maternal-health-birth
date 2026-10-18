@@ -6,7 +6,7 @@ title: "3.6 Patient Identity Context and Information Classification"
 
 Patient identity, Context Instance identifiers, and information classification establish whose information is being exchanged, the workflow context to which it belongs, and how it should be understood. The following subsections explain these perspectives and the temporal rules that preserve an accurate clinical snapshot when a document is assembled or shared later.
 
-## Patient Identity and Patient Matching for Push Transactions
+### Patient Identity and Patient Matching for Push Transactions
 
 For a MAP push transaction, patientId and sourcePatientId represent different patient-identifier perspectives. patientId SHALL be populated only when the Information Source knows the patient identifier appropriate to the Information Recipient or a mutually agreed exchange patient-identifier domain. The Information Source SHALL NOT copy its own local patient identifier into patientId merely because no recipient-known identifier is available. The Information Source local identifier belongs in DocumentEntry.sourcePatientId.
 
@@ -22,7 +22,7 @@ TX8: Organization B subsequently sends Workflow Status back to Organization A. T
 
 If B cannot match the patient, B SHALL NOT manufacture a local sourcePatientId. A failed TX8 may still carry the SubmissionSet Patient Info associated with the attempted match and report the applicable structured payload rejection outcome.
 
-## Context Instance Identifiers and Type Codes
+### Context Instance Identifiers and Type Codes
 
 ContextInstance TypeCodes have an Extensible binding to the DirectTrust Context TypeCode Value Set (DTContextTypeCodeVS), http://objects.directtrust.org/standards/terminology/ValueSet/DTContextTypeCodeVS, as specified in the SubmissionSet terminology binding table in Section 3.7.6. This binding applies to Context Instance type declarations in the Workflow Activity Task and corresponding XD or FHIR metadata. The type code identifies the kind of established Context Instance; the associated identifier identifies the particular instance.
 
@@ -30,9 +30,9 @@ The value set includes DirectTrust Context type codes and the IHE-defined access
 
 IHE definitions are provided in ITI TF Volume 3, Table 4.2.3.1.7-2, with FHIR identifier mapping in ITI TF Volume 2, Appendix Z, Section Z.9.1.2. The IHE Study Instance UID type is urn:ihe:iti:xds:2016:studyInstanceUID; the encounter identifier type is urn:ihe:iti:xds:2015:encounterId.
 
-## Information Classification and Metadata Derivation
+### Information Classification and Metadata Derivation
 
-MAP SHALL distinguish workflow activity from information-object classification. SubmissionSet.purpose identifies the Shared Activity supported by the package and SHALL align with the Workflow Activity Task.code. SubmissionSet.contentTypeCode identifies the package type and, unless a Transaction Definition states otherwise, SHALL use the typeCode of the principal DocumentEntry. DocumentEntry classCode and typeCode classify the information object; they SHALL NOT be populated with a MAP transaction code merely to identify the Shared Activity.
+MAP SHALL distinguish transaction purpose, package-content classification, and information-object classification. SubmissionSet.purpose SHALL identify the Shared Activity independently of Task presence. SubmissionSet.contentTypeCode SHALL classify the principal information content of the structured payload and establish expectations for constituent DocumentEntry.typeCode values. Each DocumentEntry.typeCode SHALL classify its corresponding information object. Unless a Transaction Definition states otherwise, contentTypeCode SHALL use the typeCode of the principal DocumentEntry; other permitted DocumentEntries MAY have different typeCodes. The applicable Transaction Definition SHALL define the expected information-object types and cardinalities. When a Workflow Activity Task is included, Task.code SHALL carry the same transaction code and code system as SubmissionSet.purpose. DocumentEntry.classCode and typeCode SHALL NOT be populated with a MAP transaction code merely to identify the Shared Activity.
 
 For clinical documents, Appendix A, Understanding Standardized Clinical Documents, explains Species, Genus, and Family and provides the maternal-health document-type catalog. Terms and Definitions supplies concise definitions. These references support application of the bindings below; they do not replace the normative requirements in this chapter or a Transaction Definition. When LOINC 10162-6 is used in this guide, its display label SHALL be Pregnancy History. Use the same label in document sections and coded metadata without conflating the semantic roles of those elements.
 
@@ -46,7 +46,7 @@ For author metadata, authorRole represents the author’s patient- or act-specif
 
 Metadata derivation SHOULD remain traceable. Implementations should be able to distinguish values extracted from the clinical source, values resolved from an authoritative provider/facility reference such as Endpoint Discovery, and values generated as packaging mechanics (for example hash, size, MIME type, or package identifiers).
 
-## Clinical Snapshot and Document Assembly Time
+### Clinical Snapshot and Document Assembly Time
 
 A document represents information applicable to a particular clinical encounter, event, or period. That clinical snapshot SHALL be preserved regardless of when the document is assembled or exchanged. Generating a document later does not authorize substitution of newer patient information for the information applicable to the snapshot.
 
