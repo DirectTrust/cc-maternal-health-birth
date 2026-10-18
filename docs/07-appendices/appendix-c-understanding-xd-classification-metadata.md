@@ -2,9 +2,9 @@
 title: "Appendix C: Understanding XD Classification Metadata"
 ---
 
-# Appendix C: Understanding XD Classification Metadata
+# Understanding XD Classification Metadata
 
-_Distinguish information object classification from package purpose._
+<span class="smallcaps">Distinguish information object classification from package purpose.</span>
 
 Appendix C explains the XD classification model used in the MAP Transaction Framework. It distinguishes DocumentEntry.classCode, DocumentEntry.typeCode, and SubmissionSet.contentTypeCode, and separates those classifications from the Shared Activity identified by SubmissionSet.purpose and Task.code. Appendix A supplies the standardized clinical-document model; Chapter 3 and each Transaction Definition establish the applicable bindings and population requirements.
 
@@ -20,13 +20,13 @@ DocumentEntry.classCode provides a broad classification of an individual informa
 
 For clinical documents, Chapter T defines Document Category as the broader semantic grouping and Document Type as the specific kind of document. XD classCode carries the exchange-defined broad classification; it is a Document Category mapping when the applicable policy declares that alignment. A classCode can classify a non-document information object without making that object a clinical document.
 
-An event notification structured payload includes the primary HL7 Version 2 notification, the required Workflow Activity Task, and the human-readable communication. Required or permitted Provenance is carried in separate Collection Bundle information objects. These objects contribute to one Shared Activity without becoming the same kind of information object.
+An event notification structured payload includes the primary HL7 Version 2 notification, an optional initiating Workflow Activity Task when included, and the human-readable communication. Required or permitted Provenance is carried in separate Collection Bundle information objects. These objects contribute to one Shared Activity without becoming the same kind of information object.
 
-| **Information object** | **Example classCode** | **Classification meaning** |
-|----|----|----|
-| Human-readable healthcare communication | LOINC 56444-3 | Identifies the human-readable healthcare communication. |
-| FHIR Task workflow module | Task resource type, where permitted | Illustrates the workflow-resource class; apply the declared CodeSystem and binding. |
-| HL7 V2 ADT notification | LOINC 86530-3 — Visit notification | Identifies the object as a machine-processable ADT notification. |
+| **Information object**                  | **Example classCode**               | **Classification meaning**                                                          |
+|-----------------------------------------|-------------------------------------|-------------------------------------------------------------------------------------|
+| Human-readable healthcare communication | LOINC 56444-3                       | Identifies the human-readable healthcare communication.                             |
+| FHIR Task workflow module               | Task resource type, where permitted | Illustrates the workflow-resource class; apply the declared CodeSystem and binding. |
+| HL7 V2 ADT notification                 | LOINC 86530-3 — Visit notification  | Identifies the object as a machine-processable ADT notification.                    |
 
 The event-notification example uses LOINC 56444-3, Healthcare communication Document, for the human-readable communication and LOINC 86530-3, Visit notification, for the broad notification class. A Task resource-type classification illustrates the workflow object’s role where an applicable Transaction Definition explicitly permits that classification and coding system.
 
@@ -44,11 +44,11 @@ For the primary HL7 Version 2 event notification, select the specific notificati
 
 An applicable Transaction Definition may assign the same event-specific typeCode to the related notification, Task, and human-readable communication. This convention must be explicit; participation in the same structured payload does not automatically give every information object the same typeCode.
 
-| **Information object** | **classCode** | **typeCode** |
-|----|----|----|
-| Human-readable communication | 56444-3 | Event-specific code when specified by the TX Definition |
-| FHIR Task | Task resource type, where permitted | Event-specific code when specified by the TX Definition |
-| HL7 V2 notification | 86530-3 | Event-specific code when specified by the TX Definition |
+| **Information object**       | **classCode**                       | **typeCode**                                            |
+|------------------------------|-------------------------------------|---------------------------------------------------------|
+| Human-readable communication | 56444-3                             | Event-specific code when specified by the TX Definition |
+| FHIR Task                    | Task resource type, where permitted | Event-specific code when specified by the TX Definition |
+| HL7 V2 notification          | 86530-3                             | Event-specific code when specified by the TX Definition |
 
 Shared typeCode values may identify the common healthcare communication represented by differently classified objects. Independently classified objects retain their own type: for example, a Provenance Collection Bundle uses the Provenance Information classification required by Chapter 3 rather than inheriting the event type merely because it accompanies a notification.
 
@@ -64,14 +64,14 @@ What information type best characterizes this structured payload?
 
 Chapter 3 establishes the default: unless a Transaction Definition specifies otherwise, SubmissionSet.contentTypeCode uses the typeCode of the primary information object’s DocumentEntry. In an event notification, that is the primary HL7 Version 2 notification. This alignment does not require all other DocumentEntries to carry that same typeCode.
 
-SubmissionSet.purpose answers a different question: which Shared Activity is requested? It aligns with Task.code, using the applicable transaction binding. A clinical event code does not replace the requested-activity code, and a MAP transaction code does not replace information-object classification.
+SubmissionSet.purpose answers a different question: which Shared Activity is requested? It is required independently of Task; when an initiating Task is present, Task.code matches it in both code and code system. A clinical event code does not replace the requested-activity code, and a MAP transaction code does not replace information-object classification.
 
-| **Metadata element** | **Question it answers** |
-|----|----|
-| DocumentEntry.classCode | What broad classification describes this information object? |
-| DocumentEntry.typeCode | What specific information type does this object represent? |
-| SubmissionSet.contentTypeCode | What information type characterizes the structured payload? |
-| SubmissionSet.purpose and Task.code | Which Shared Activity is requested? |
+| **Metadata element**                             | **Question it answers**                                      |
+|--------------------------------------------------|--------------------------------------------------------------|
+| DocumentEntry.classCode                          | What broad classification describes this information object? |
+| DocumentEntry.typeCode                           | What specific information type does this object represent?   |
+| SubmissionSet.contentTypeCode                    | What information type characterizes the structured payload?  |
+| SubmissionSet.purpose (and Task.code if present) | Which Shared Activity is requested?                          |
 
 ## Default Alignment and Transaction Specific Exceptions
 
@@ -81,13 +81,13 @@ Apply the primary DocumentEntry typeCode as SubmissionSet.contentTypeCode by def
 
 For a package containing multiple information-object types, the Transaction Definition identifies the primary information object and any explicit contentTypeCode exception. An alternative classification must have a defined meaning and comply with the applicable terminology binding; it is not an ad hoc packaging choice.
 
-Select classCode for each object’s broad classification and typeCode for its specific semantic type. Use the primary typeCode for package classification unless the Transaction Definition specifies an exception. Use SubmissionSet.purpose and Task.code for the requested Shared Activity. Apply the bindings in Chapter 3 together with explicit transaction-specific values.
+Select classCode for each object’s broad classification and typeCode for its specific semantic type. Use the primary typeCode for package classification unless the Transaction Definition specifies an exception. Use the required SubmissionSet.purpose for the requested Shared Activity; when Task is included, align Task.code with it. Apply the bindings in Chapter 3 together with explicit transaction-specific values.
 
 ## Application to Event Notifications
 
 The table below illustrates an event-notification classification pattern. The event-specific typeCode may be shared among these related objects only where the applicable Transaction Definition establishes that convention. The primary notification supplies the default SubmissionSet.contentTypeCode. Optional Provenance Collection Bundles retain their separately specified classification.
 
-The workflow request is expressed in Task.code and SubmissionSet.purpose. The classCode and typeCode describe the Task information object according to its declared bindings; they do not substitute for those workflow controls. Each Task, primary notification, human-readable file, and Provenance Bundle has its own metadata and SubmissionSet membership.
+The workflow request is expressed in required SubmissionSet.purpose and, when an initiating Task is included, matching Task.code (code and code system). The classCode and typeCode of any included Task describe that information object under its declared bindings; they do not substitute for workflow purpose. Each included information object has its own metadata and SubmissionSet membership. TX8 is a separate reporting transaction whose Task is required, when TX8 reporting applies.
 
 ## Why this matters for progressive interoperability
 
@@ -97,7 +97,7 @@ Metadata can express a shared event meaning where that mapping is defined, while
 
 ## Source guidance
 
-The Event Notifications via the Direct Standard®, Version 1.2, is a source for the event-notification metadata pattern. The examples here distinguish that notification pattern from MAP’s additional Workflow Activity Task and Provenance requirements. Apply the current specifications governing the implemented transaction; examples do not establish a universal binding for every information object.
+The Event Notifications via the Direct Standard®, Version 1.2, is a source for the event-notification metadata pattern. The examples here distinguish that notification pattern from MAP’s conditional initiating Workflow Activity Task and applicable Provenance requirements. Apply the current specifications governing the implemented transaction; examples do not establish a universal binding for every information object.
 
 Chapter 3 defines the common inventories, required typeCode, Extensible bindings, primary-object package classification, and workflow-purpose rules. A non-LOINC classification, including a FHIR resource-type code, requires the applicable binding and transaction specification to support its use. Unknown formatCode may be omitted under Chapter 3; information-object typeCode remains required and uses a defined standard or expressly permitted temporary code.
 

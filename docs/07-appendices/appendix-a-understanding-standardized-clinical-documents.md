@@ -2,9 +2,9 @@
 title: "Appendix A: Understanding Standardized Clinical Documents"
 ---
 
-# Appendix A: Understanding Standardized Clinical Documents
+# Understanding Standardized Clinical Documents
 
-_Understand document identity scope and clinical time._
+<span class="smallcaps">Understand document identity scope and clinical time.</span>
 
 Appendix A explains standardized clinical documents as meaningful information collections within the MAP Framework. It connects document classification, scope, identity, derivation, authentication, and clinical time with the requirements in Chapter 3 and the implementation guidance in Chapter 5. Standardization establishes shared expectations for a document’s meaning, structure, metadata, and exchange; it does not require every clinical statement to be discretely coded. Minimally Structured Documents can meet those expectations while preserving human-readable source information. Apply these concepts together with the applicable Transaction Definition when preparing or consuming clinical information objects.
 
@@ -14,11 +14,11 @@ Clinical documents have distinct Document Type, Document Template/Profile, and D
 
 This Implementation Guide distinguishes three complementary dimensions of document classification. Species identifies the specific clinical document type and is represented by ClinicalDocument/code using the most specific appropriate LOINC Document Ontology code. Genus identifies the structural document archetype asserted by the applicable document-level templateId. Family identifies one or more broader collections used for discovery and workflow classification and is represented using sdtc:category. These dimensions answer different questions and should not be conflated.
 
-| **Dimension** | **What it tells the implementer** | **Primary CDA representation** |
-|----|----|----|
-| Species — Document Type | What specific kind of information collection is this? The selected type conveys expectations about why the document was made, its subject-matter domain, and the role/provenance generally associated with that document type. | ClinicalDocument/code; most specific appropriate LOINC Document Ontology code. |
-| Genus — Document Template/Profile | What structural model does the document assert conformance to, and therefore what kinds of structured content can be expected? | Document-level templateId. |
-| Family — Document Category | To what broader collection or collections does this document belong for discovery and workflow purposes? | sdtc:category; a document may belong to more than one Family. |
+| **Dimension**                     | **What it tells the implementer**                                                                                                                                                                                              | **Primary CDA representation**                                                 |
+|-----------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------|
+| Species — Document Type           | What specific kind of information collection is this? The selected type conveys expectations about why the document was made, its subject-matter domain, and the role/provenance generally associated with that document type. | ClinicalDocument/code; most specific appropriate LOINC Document Ontology code. |
+| Genus — Document Template/Profile | What structural model does the document assert conformance to, and therefore what kinds of structured content can be expected?                                                                                                 | Document-level templateId.                                                     |
+| Family — Document Category        | To what broader collection or collections does this document belong for discovery and workflow purposes?                                                                                                                       | sdtc:category; a document may belong to more than one Family.                  |
 
 For example, this guide uses 92576-8, Maternal discharge summary – recommended IHE set, for a Maternal Discharge Summary. Its structural archetype is identified by the applicable asserted document template. Broader classifications follow Chapter 3’s mappings. Where 10162-6 is used, it denotes Pregnancy History (LOINC: Pregnancy History). The clinical section code and its use as a broader document classification are separate applications of the code.
 
@@ -58,12 +58,12 @@ Standardized classification helps distinguish information completeness from stru
 
 The following comparison shows how a Source Form can be preserved within CDA while structured clinical content is progressively added. Each representation has its own capabilities; the presence of a structured body does not establish that every clinical statement has a coded representation.
 
-| **Representation** | **Source information** | **Structured clinical content** |
-|----|----|----|
-| Source Form PDF | Human-readable source information | Depends on the source form; no CDA clinical entries implied |
-| CDA with nonXMLBody | Source Form carried in the document body | Structured CDA header; no structuredBody entries |
-| CDA with structuredBody and Source Form | Source Form carried in a Source Form section | Additional sections and entries as required or permitted by the declared template or profile |
-| CDA with structured narrative and entries | Human-readable narrative presents the clinical information | Coded entries support processing; coverage depends on the template and instance |
+| **Representation**                        | **Source information**                                     | **Structured clinical content**                                                              |
+|-------------------------------------------|------------------------------------------------------------|----------------------------------------------------------------------------------------------|
+| Source Form PDF                           | Human-readable source information                          | Depends on the source form; no CDA clinical entries implied                                  |
+| CDA with nonXMLBody                       | Source Form carried in the document body                   | Structured CDA header; no structuredBody entries                                             |
+| CDA with structuredBody and Source Form   | Source Form carried in a Source Form section               | Additional sections and entries as required or permitted by the declared template or profile |
+| CDA with structured narrative and entries | Human-readable narrative presents the clinical information | Coded entries support processing; coverage depends on the template and instance              |
 
 ## Documents as Whole Information Collections
 
@@ -95,12 +95,12 @@ A Postpartum Summary can serve as the maintained longitudinal information collec
 
 Document classification and derivation answer what a document is and how it relates to other documents. Information Collection Scope answers a different question: what establishes the boundaries of the information collection?
 
-| **Scope** | **Educational definition** | **Clinical anchor** |
-|----|----|----|
-| Encounter Summary / Encounter Note | The encounter itself establishes the beginning and end of the information collection. The document summarizes the patient state established during or at completion of one visit or stay. | The encounter, ordinarily anchored to completion of the visit/stay. |
+| **Scope**                              | **Educational definition**                                                                                                                                                                                                                                                        | **Clinical anchor**                                                       |
+|----------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------|
+| Encounter Summary / Encounter Note     | The encounter itself establishes the beginning and end of the information collection. The document summarizes the patient state established during or at completion of one visit or stay.                                                                                         | The encounter, ordinarily anchored to completion of the visit/stay.       |
 | Episode of Care / Longitudinal Summary | An explicitly established Episode of Care Context Instance establishes the boundaries of the information collection. It may span one or many encounters; a one-visit episode remains episode-scoped when the episode context, rather than the encounter alone, defines the whole. | The clinically meaningful snapshot point of the evolving episode summary. |
-| Patient Summary | A point-in-time summary of the patient's health history over a span of time up to the represented snapshot. | The point represented by the summary. |
-| Patient Record | A more comprehensive longitudinal collection of patient information accumulated over time. | The record's longitudinal scope; not reduced to one encounter. |
+| Patient Summary                        | A point-in-time summary of the patient's health history over a span of time up to the represented snapshot.                                                                                                                                                                       | The point represented by the summary.                                     |
+| Patient Record                         | A more comprehensive longitudinal collection of patient information accumulated over time.                                                                                                                                                                                        | The record's longitudinal scope; not reduced to one encounter.            |
 
 Implementer test. Ask what establishes the boundaries of the information collection. If the encounter itself establishes the beginning and end of the whole, the document is encounter-scoped. If an explicitly established episode context establishes those boundaries, the document is episode-scoped even when that episode happens to contain only one encounter.
 
@@ -118,7 +118,7 @@ For example, a discharge summary represents the patient’s state at discharge. 
 
 When CDA represents an existing document in another format, preserve the source document’s authored information and time. A scanned form dated October 15 and converted into CDA on January 1 retains the original document’s effective time; January 1 describes the conversion or assembly activity. Structured entries and sections must not introduce clinical facts absent from the source form or attribute another party’s additions to the original author.
 
-Appendix E distinguishes Document Status from metadata availability and transaction workflow status. Its crosswalk addresses CDA sdtc:statusCode, FHIR Composition.status, and DocumentReference.docStatus without assuming exact equivalence.
+Appendix E distinguishes Document Status from metadata availability and transaction workflow status. TX8 is a separate, conditional reporting transaction; its presence or absence does not determine a document’s clinical status. Its crosswalk addresses CDA sdtc:statusCode, FHIR Composition.status, and DocumentReference.docStatus without assuming exact equivalence.
 
 ## Authentication Is Part of the Document Lifecycle
 
@@ -140,15 +140,15 @@ Use Pregnancy History as the display label for 10162-6 throughout this guide. Th
 
 ### Outside Pregnancy
 
-<table style="width:97%;">
+<table>
 <colgroup>
-<col style="width: 16%" />
-<col style="width: 21%" />
+<col style="width: 17%" />
+<col style="width: 22%" />
 <col style="width: 23%" />
-<col style="width: 35%" />
+<col style="width: 36%" />
 </colgroup>
 <thead>
-<tr>
+<tr class="header">
 <th><strong>Broader category codes</strong></th>
 <th><strong>Document type code</strong></th>
 <th><strong>Document label</strong></th>
@@ -156,7 +156,7 @@ Use Pregnancy History as the display label for 10162-6 throughout this guide. Th
 </tr>
 </thead>
 <tbody>
-<tr>
+<tr class="odd">
 <td>10162-6<br />
 11506-3</td>
 <td>89224-0</td>
@@ -165,7 +165,7 @@ Use Pregnancy History as the display label for 10162-6 throughout this guide. Th
 <br />
 A specialized Progress note with information relevant to a GYN visit as the type of Service/type of encounter. It is typically written by an OB/GYN type of provider.</td>
 </tr>
-<tr>
+<tr class="even">
 <td>10162-6<br />
 34117-2</td>
 <td>89221-6</td>
@@ -174,7 +174,7 @@ A specialized Progress note with information relevant to a GYN visit as the type
 <br />
 A specialized History and Physical note with information relevant to a GYN visit as the type or service/type of encounter. It includes information regarding a full history and physical examination.</td>
 </tr>
-<tr>
+<tr class="odd">
 <td>10162-6<br />
 34133-9</td>
 <td>89237-2</td>
@@ -188,15 +188,15 @@ A specialized Continuity of Care note with information relevant to a Gynecology 
 
 ### Pregnancy
 
-<table style="width:97%;">
+<table>
 <colgroup>
-<col style="width: 16%" />
-<col style="width: 21%" />
+<col style="width: 17%" />
+<col style="width: 22%" />
 <col style="width: 23%" />
-<col style="width: 35%" />
+<col style="width: 36%" />
 </colgroup>
 <thead>
-<tr>
+<tr class="header">
 <th><strong>Broader category codes</strong></th>
 <th><strong>Document type code</strong></th>
 <th><strong>Document label</strong></th>
@@ -204,7 +204,7 @@ A specialized Continuity of Care note with information relevant to a Gynecology 
 </tr>
 </thead>
 <tbody>
-<tr>
+<tr class="odd">
 <td>10162-6</td>
 <td>89470-9</td>
 <td>Obstetrics Summary</td>
@@ -212,21 +212,21 @@ A specialized Continuity of Care note with information relevant to a Gynecology 
 <br />
 This type of document includes information about one or more episodes of care spanning pregnancy, birth, and post-partum for one or more pregnancies. A very summarized version of this type of document is what would go in the Pregnancy History section (10162-6) of a "Patient Summary" kind of document.</td>
 </tr>
-<tr>
+<tr class="even">
 <td>10162-6<br />
 34133-9</td>
 <td>57055-6</td>
 <td>Antepartum Summary</td>
 <td>Summary of episode of care for one pregnancy - encompasses the H&amp;P and subsequent Progress Notes, and the initial Notification of Pregnancy information, Risk Factors, Plan of Care, and Education Notes.</td>
 </tr>
-<tr>
+<tr class="odd">
 <td>10162-6<br />
 34117-2</td>
 <td>34117-2</td>
 <td>History and Physical Note</td>
 <td></td>
 </tr>
-<tr>
+<tr class="even">
 <td>10162-6</td>
 <td>78711-9</td>
 <td>Obstetrics and Gynecology Flowsheet</td>
@@ -234,7 +234,7 @@ This type of document includes information about one or more episodes of care sp
 <br />
 Organizes the key Test Results and Vital Signs (included in core sections), and other Observations which may have been gathered prior to the pregnancy, but are considered relevant for this pregnancy. This is not part of the H&amp;P.</td>
 </tr>
-<tr>
+<tr class="odd">
 <td>10162-6</td>
 <td>89238-0</td>
 <td>Obstetrics Flowsheet</td>
@@ -245,19 +245,19 @@ Example: Content As defined by IHE  Page 121.<br />
 Organizes the key Test Results and Vital Signs (included in core sections), and other Observations over the course of the entire pregnancy. This is not part of the H&amp;P.<br />
 ACOG Calls this the "Antepartum Record". It includes ACOG Forms A to G.</td>
 </tr>
-<tr>
+<tr class="even">
 <td>10162-6</td>
 <td>92016-5</td>
 <td>Pregnancy Notification &amp; Risk Factors</td>
 <td></td>
 </tr>
-<tr>
+<tr class="odd">
 <td>10162-6</td>
 <td>90767-5</td>
 <td>Pregnancy Status Summary</td>
 <td></td>
 </tr>
-<tr>
+<tr class="even">
 <td>10162-6</td>
 <td>71482-4</td>
 <td>Risk Assessment Summary</td>
@@ -265,51 +265,51 @@ ACOG Calls this the "Antepartum Record". It includes ACOG Forms A to G.</td>
 <br />
 A summarization of information used to assess pregnancy risk factors.</td>
 </tr>
-<tr>
+<tr class="odd">
 <td>10162-6</td>
 <td>89233-1</td>
 <td>Obstetrics Progress Note</td>
 <td>The note from an encounter during a pregnancy.</td>
 </tr>
-<tr>
+<tr class="even">
 <td>10162-6<br />
 18748-4</td>
 <td>18748-4 (or more specific types)</td>
 <td>Diagnostic imaging study</td>
 <td>Diagnostic Imaging Ultrasound Report</td>
 </tr>
-<tr>
+<tr class="odd">
 <td>10162-6<br />
 11502-2</td>
 <td>11502-2 (or more specific types)</td>
 <td>Laboratory Report</td>
 <td>Diagnostic Testing Laboratory Results Report</td>
 </tr>
-<tr>
+<tr class="even">
 <td>10162-6</td>
 <td>18776-5</td>
 <td>Care Plan</td>
 <td>The Obstetrics plan of care at the point in time when the document is created.</td>
 </tr>
-<tr>
+<tr class="odd">
 <td>10162-6</td>
 <td>34895-3</td>
 <td>Education Information</td>
 <td>List of the provided Obstetrics education that has been provided.</td>
 </tr>
-<tr>
+<tr class="even">
 <td>10162-6</td>
 <td>89234-9</td>
 <td>Obstetrics Referral</td>
 <td>The referral to request birth services for a patient who has received prenatal care elsewhere.</td>
 </tr>
-<tr>
+<tr class="odd">
 <td>10162-6</td>
 <td>57079-6</td>
 <td>Birth Plan</td>
 <td>Patient preferences regarding various aspects of the birth intervention.</td>
 </tr>
-<tr>
+<tr class="even">
 <td>BIRTH</td>
 <td>DT-Birth</td>
 <td>Birth Notification</td>
@@ -320,15 +320,15 @@ A summarization of information used to assess pregnancy risk factors.</td>
 
 ### Birth
 
-<table style="width:97%;">
+<table>
 <colgroup>
-<col style="width: 16%" />
-<col style="width: 21%" />
+<col style="width: 17%" />
+<col style="width: 22%" />
 <col style="width: 23%" />
-<col style="width: 35%" />
+<col style="width: 36%" />
 </colgroup>
 <thead>
-<tr>
+<tr class="header">
 <th><strong>Broader category codes</strong></th>
 <th><strong>Document type code</strong></th>
 <th><strong>Document label</strong></th>
@@ -336,7 +336,7 @@ A summarization of information used to assess pregnancy risk factors.</td>
 </tr>
 </thead>
 <tbody>
-<tr>
+<tr class="odd">
 <td>10162-6<br />
 15508-5<br />
 67851-6</td>
@@ -344,7 +344,7 @@ A summarization of information used to assess pregnancy risk factors.</td>
 <td>Labor and Delivery Admission Note</td>
 <td>The beginning of a birth encounter (Type of Service is an Admission.)</td>
 </tr>
-<tr>
+<tr class="even">
 <td>10162-6<br />
 15508-5<br />
 34117-2</td>
@@ -352,7 +352,7 @@ A summarization of information used to assess pregnancy risk factors.</td>
 <td>Labor and Delivery History and Physical Note</td>
 <td>The history and physical information gathered at the beginning of a birth encounter. This can be a section within an Admission note, or it can be produced as a document on its own. This information can be "fed by" the history and physical information gathered during the Antepartum period.</td>
 </tr>
-<tr>
+<tr class="odd">
 <td>10162-6<br />
 15508-5<br />
 11504-8</td>
@@ -360,7 +360,7 @@ A summarization of information used to assess pregnancy risk factors.</td>
 <td>Obstetric Surgical Operation Note</td>
 <td>Within the context of a Maternal Discharge Summary, this other document type could be referenced or a section using this LOINC Code might contain summary information from the surgical procedure (i.e. c-section) and then include an external document reference entry.</td>
 </tr>
-<tr>
+<tr class="even">
 <td>10162-6<br />
 15508-5<br />
 34133-9</td>
@@ -368,14 +368,14 @@ A summarization of information used to assess pregnancy risk factors.</td>
 <td>Labor and Delivery Summary</td>
 <td>This document is produced at the end of a labor and delivery episode and if there are multiple encounters (i.e. ED--&gt;Hospital (birthing ward) --&gt;NICU at specialty hospital.  The system that makes this document is the system that is used at the conclusion of the birth.) It includes summarization of the Obstetrics Surgical note if/where appropriate. It may include summarization of the specialized information in the Maternal and fetal medicine discharge summary.</td>
 </tr>
-<tr>
+<tr class="odd">
 <td>10162-6<br />
 18776-5</td>
 <td>18776-5</td>
 <td>Care Plan</td>
 <td>The Postpartum plan of care.</td>
 </tr>
-<tr>
+<tr class="even">
 <td>10162-6<br />
 15508-5<br />
 18842-5</td>
@@ -392,7 +392,7 @@ at home monitoring for hypertension<br />
 optional postpartum physical therapy<br />
 Recovery goals for c-section</td>
 </tr>
-<tr>
+<tr class="odd">
 <td>10162-6<br />
 15508-5<br />
 18842-5</td>
@@ -407,15 +407,15 @@ The end of a birth encounter with complications that may have needed additional 
 
 ### Postpartum
 
-<table style="width:97%;">
+<table>
 <colgroup>
-<col style="width: 16%" />
-<col style="width: 21%" />
+<col style="width: 17%" />
+<col style="width: 22%" />
 <col style="width: 23%" />
-<col style="width: 35%" />
+<col style="width: 36%" />
 </colgroup>
 <thead>
-<tr>
+<tr class="header">
 <th><strong>Broader category codes</strong></th>
 <th><strong>Document type code</strong></th>
 <th><strong>Document label</strong></th>
@@ -423,21 +423,21 @@ The end of a birth encounter with complications that may have needed additional 
 </tr>
 </thead>
 <tbody>
-<tr>
+<tr class="odd">
 <td>10162-6<br />
 18776-5</td>
 <td>18776-5</td>
 <td>Care Plan</td>
 <td>The Postpartum plan of care.</td>
 </tr>
-<tr>
+<tr class="even">
 <td>10162-6<br />
 34133-9</td>
 <td>112590-5</td>
 <td>Postpartum Summary</td>
 <td>Episode of Care as bounded by time or postpartum period. Type of Service is postpartum care and monitoring.</td>
 </tr>
-<tr>
+<tr class="odd">
 <td>10162-6<br />
 11506-3</td>
 <td>68608-9</td>
