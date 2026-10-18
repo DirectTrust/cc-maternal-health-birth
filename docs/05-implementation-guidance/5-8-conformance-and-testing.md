@@ -1,20 +1,17 @@
----
-title: "5.8 Conformance and Testing"
----
+## 5.8 Conformance and Testing
 
-# 5.8 Conformance and Testing
-
-Conformance requires observable behavior as well as syntactically valid artifacts. Begin with the declared capability chain: Endpoint → Use Case → Transaction → Technical Actor Role → Supported Exchange Options → Workflow Status Responsibilities. Exercise the declared combinations, package completeness, metadata semantics, reference resolution, correlation, report timing, and acceptance or rejection behavior separately from processing after acceptance.
+Conformance requires observable behavior as well as syntactically valid artifacts. Begin with the declared capability chain: Endpoint → Use Case → Transaction → Technical Actor Role → Supported Exchange Options → Workflow Status Responsibilities. Exercise only declared and applicable combinations, package completeness, required FHIR SubmissionSet List profile and purpose extension, metadata semantics, reference resolution, correlation, and acceptance or rejection behavior separately from processing after acceptance. Test originating transactions with and without optional Task where permitted; Task absence SHALL NOT eliminate required SubmissionSet identity or purpose. TX8 Sender Actor and Receiver Actor support is assessed independently when declared or specifically required.
 
 Test workflow status reporting independently from transport delivery. TX8 carries its own SubmissionSet/List and one report Task, a minimal identification snapshot of the originating SubmissionSet/List as the primary information object, and required accept or reject Provenance in a separate Collection Bundle. completed means acceptance of the original structured payload; failed means rejection. The report does not assert completion of subsequent clinical work. No TX8 is generated for a TX8.
 
-Measure the expected reporting interval from the last sender acting for the Information Source Organization sending to a Routing Target associated with the Information Recipient Organization. The default is 60 minutes unless an explicit use-case or recipient-specific agreement sets another interval. Preserve all indicated Workflow Status Update Endpoints and deduplicate identical Direct addresses. Missing correlated reports trigger follow-up; they do not establish acceptance, rejection, or non-receipt.
+Where TX8 reporting is required, measure the expected interval from the last sender acting for the Information Source Organization sending to a Routing Target associated with the Information Recipient Organization. The default is 60 minutes unless an explicit use-case or recipient-specific agreement sets another interval. When Task is present, preserve and deduplicate applicable Task-carried Workflow Status Update Endpoints and verify TX8 Receiver Actor capability for each destination. When Task is absent, use only the Directory-qualified Message Delivery Notification address fallback. If no eligible destination exists, record unsuccessful reporting and do not dispatch TX8 or change the originating processing outcome solely for that reason. Missing required correlated reports trigger follow-up; they do not establish acceptance, rejection, or non-receipt.
 
-| **Test area** | **What to verify** |
-|----|----|
-| Capability | Declared transactions, Technical Actor Roles, exchange options, and required TX8 capability agree with implemented behavior. |
-| Message and transport | Direct headers and MIME structure are correct. MDN delivery evidence remains distinct from workflow status. |
+| **Test area**                   | **What to verify**                                                                                                                                                                  |
+|---------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Capability                      | Declared transactions, Technical Actor Roles, exchange options, and required TX8 capability agree with implemented behavior.                                                        |
+| Message and transport           | Direct headers and MIME structure are correct. MDN delivery evidence remains distinct from workflow status.                                                                         |
 | Structured payload and metadata | Information objects, one Workflow Activity Task, human-readable copies, identity, Context, correlation, cardinalities, membership, and references meet the applicable requirements. |
-| Processing | Whole-package acceptance or rejection is distinct from subsequent requested processing and clinical service fulfillment. |
-| Provenance | Independent Provenance Collection Bundles retain attributable assertions and resolve targets using the specified rules; required and permitted activities are checked. |
-| TX8 | Originating snapshot identity, report Task status, accept/reject activity, failure reason, endpoint set, timing, and observable workflow status agree. |
+| Processing                      | Whole-package acceptance or rejection is distinct from subsequent requested processing and clinical service fulfillment.                                                            |
+| Provenance                      | Independent Provenance Collection Bundles retain attributable assertions and resolve targets using the specified rules; required and permitted activities are checked.              |
+| TX8                             | Originating snapshot identity, report Task status, accept/reject activity, failure reason, endpoint set, timing, and observable workflow status agree.                              |
+
