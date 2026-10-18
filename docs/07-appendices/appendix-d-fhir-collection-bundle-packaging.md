@@ -41,7 +41,7 @@ Bundle.entry is a place where a resource resides. List.entry.item is a reference
 
 This TX3 illustration includes the current SubmissionSet List, five DocumentReferences, the Workflow Activity Task, Birth Notification CDA, required TXT, optional HTML, and one optional Provenance Collection Bundle. Patient, source Organization, author, and intended-recipient resources support the metadata and Task references. The recipient PractitionerRole identifies the OB acting for the receiving practice. Its Endpoint is used as the Routing Target only when the applicable routing rules select it. This illustration intentionally shows a Task-present case. It does not establish a universal Task requirement for originating transactions or require every receiver to implement optional Task processing.
 
-<img src="media/image2.png" style="width:6.3in;height:3.89789in" />
+![](/images/07-appendices/appendix-d-fhir-collection-bundle-packaging-1.png)
 
 Figure D.1. Illustrative TX3 structured payload. Membership links reach DocumentReferences; content locators reach their information objects. Supporting-resource links do not create List membership. Entry 11 is a nested Provenance Collection Bundle, not a Provenance resource peer of the outer entries.
 
