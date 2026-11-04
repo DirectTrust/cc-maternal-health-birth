@@ -45,6 +45,20 @@ npm run docs:build     # static build to docs/.vitepress/dist/
 npm run docs:preview   # serve the production build locally
 ```
 
-## How it gets hosted
+## Hosting and versions
 
-GitHub Pages is configured to deploy from GitHub Actions (repo **Settings → Pages → Build and deployment → Source → GitHub Actions**), not from a branch. `.github/workflows/deploy.yml` runs on every push to `main`: checks out the repo, installs dependencies, runs `docs:build`, and hands the `dist/` folder to GitHub's official Pages deploy action. A push to `main` is live at `https://directtrust.github.io/cc-maternal-health-birth/` shortly after — watch progress under the repo's **Actions** tab.
+Pages is deployed from GitHub Actions (**Settings → Pages → Source → GitHub Actions**). `.github/workflows/deploy.yml` runs on every push to `main` or `develop`, and when a release is published. It runs `scripts/build-site.sh`, which builds every version into one site:
+
+| URL | Source | Purpose |
+|---|---|---|
+| `/cc-maternal-health-birth/` | `main` | Current published version. A placeholder page until the first release |
+| `/cc-maternal-health-birth/develop/` | `develop` | Draft preview of the next version (DRAFT banner, `noindex`) |
+| `/cc-maternal-health-birth/<tag>/` | every git tag | Archived versions |
+
+The workflow always runs the build scripts from `develop`, so `main` can stay empty (just this README, `.gitignore` and the workflow) until there is something to release. While `main` has no guide, the site root is a placeholder pointing at the draft, and the **Latest** row of the Version History page has no link.
+
+The **Version History** page (last entry in the left navigation) is generated at build time by `scripts/generate-history.mjs`; release descriptions come from the GitHub release notes for each tag.
+
+## Branching
+
+All work happens on `develop`. To make the first release, merge `develop` into `main`, then tag and publish a GitHub release named for the version.
