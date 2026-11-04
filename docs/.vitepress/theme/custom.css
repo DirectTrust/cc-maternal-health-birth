@@ -89,6 +89,12 @@
   border-top: none;
 }
 
+/* No divider between "Transaction Framework" and "Transaction Definitions" in the sidebar
+   (VitePress draws one above every top-level group). */
+.VPSidebar .group:has(> .VPSidebarItem > .item > a[href$='/03-02-map-transaction-definitions/']) {
+  border-top: none;
+}
+
 /* Home page hero: index.md is a plain doc page (not VitePress's special
    layout: home) so the sidebar shows there like every other page. This is a
    hand-built lookalike of VitePress's VPHero component, styled with the same
