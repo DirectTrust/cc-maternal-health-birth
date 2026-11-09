@@ -57,7 +57,7 @@ Pages is deployed from GitHub Actions (**Settings → Pages → Source → GitHu
 
 The workflow always runs the build scripts from `develop`, so `main` can stay empty (just this README, `.gitignore` and the workflow) until there is something to release. While `main` has no guide, the site root is a placeholder pointing at the draft, and the **Latest** row of the Version History page has no link.
 
-The **Version History** page (last entry in the left navigation) is generated at build time by `scripts/generate-history.mjs`; release descriptions come from the GitHub release notes for each tag.
+The **Version History** page (last entry in the left navigation) is generated at build time by `scripts/generate-history.mjs`; release descriptions come from the GitHub release notes for each tag. A tag is a **release** only if it is named `ANSI-DS<year>-<nn>-<nnn>-<year>` (e.g. `ANSI-DS2020-03-101-2025`; tags cannot contain spaces, so `ANSI DS...` is hyphenated). Releases are listed under *Released versions* and the newest one is *Latest*; any other tag (for example a trial-use version such as `STU-...`) is listed under *Other working versions*. Release notes follow one format: a `##` heading line (`DS<year>-<nn>-<nnn>-<year> – Version <x>`) followed by a short paragraph (e.g. the release date).
 
 ## Branching
 

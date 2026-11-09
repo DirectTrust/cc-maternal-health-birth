@@ -5,11 +5,14 @@
 //
 //   - "Develop" is always listed. "Latest" (main) is listed with a link once a version has been
 //     released; before that main is empty, so it is shown without a link.
-//   - Every git tag is a released version. Its description is the body of the GitHub
+//   - Every git tag is listed (see the naming rule below). Its description is the body of the GitHub
 //     release for that tag (fetched with the gh CLI); with no release, it falls back to
 //     the tag's own message.
-//   - "Other working versions" is reserved for tagged working versions that follow a
-//     naming convention we do not have yet, so it is empty for now.
+//   - A tag is a released version only if its name is the standard's identifier,
+//     ANSI-DS<year>-<nn>-<nnn>-<year>
+//     (e.g. ANSI-DS2020-03-101-2025; a tag cannot contain a space, so "ANSI DS..." is hyphenated). Any other tag (e.g. a Standard for
+//     Trial Use such as DS2020-03-101-2025-STU-1.2.1) is an "Other working version": listed
+//     under that heading, never "Latest". Its site build and release notes work like any tag.
 //
 // Usage: node scripts/generate-history.mjs [out-file]   (default docs/version-history.md)
 import { execFileSync } from 'node:child_process'
@@ -51,14 +54,18 @@ const tags = run('git', ['for-each-ref', '--format=%(refname:short)%09%(creatord
   // Newest release first, so the most recent version is at the top of the list.
   .sort((a, b) => b.date - a.date)
 
+// Naming convention for released versions (see header comment); every other tag is a working version.
+const isRelease = (name) => /^ANSI-DS\d{4}-\d{2}-\d{3}-\d{4}$/.test(name)
+const releasedTags = tags.filter((t) => isRelease(t.name))
+const workingTags = tags.filter((t) => !isRelease(t.name))
+
 const link = (href, text) => `<a class="vp-raw" href="${href}">${text}</a>`
-const day = (d) => d.toISOString().slice(0, 10)
 
 // "Latest" is whatever main currently is, so name the release it corresponds to: the newest
 // tag reachable from main (the tag on main's head commit when main has not moved past it).
 const MAIN_REF = process.env.MAIN_REF ?? 'origin/main'
 let latest = null
-let latestDate = ''
+let latestTag = null
 let hasRelease = false
 const mainHasSite = () => {
   try {
@@ -70,23 +77,14 @@ const mainHasSite = () => {
 }
 try {
   const merged = new Set(run('git', ['tag', '--merged', MAIN_REF]).split('\n').filter(Boolean))
-  const t = tags.find((t) => merged.has(t.name)) // tags are sorted newest first
+  const t = releasedTags.find((t) => merged.has(t.name)) // tags are sorted newest first
   latest = t?.name ?? null
-  latestDate = t ? day(t.date) : ''
+  latestTag = t ?? null
   // Until the first release, main holds no guide (just the repo scaffolding), so there is no
   // published version to link to; build-site.sh serves a placeholder at the root instead.
-  hasRelease = tags.length > 0 || mainHasSite()
+  hasRelease = releasedTags.length > 0 || mainHasSite()
 } catch (e) {
   console.warn(`generate-history: could not map ${MAIN_REF} to a tag (${e.message.split('\n')[0]})`)
-}
-
-// Develop has no release date, so show when its branch was last modified.
-const DEVELOP_REF = process.env.DEVELOP_REF ?? 'origin/develop'
-let developDate = ''
-try {
-  developDate = day(new Date(run('git', ['log', '-1', '--format=%cI', DEVELOP_REF]).trim()))
-} catch (e) {
-  console.warn(`generate-history: could not read the last commit date of ${DEVELOP_REF} (${e.message.split('\n')[0]})`)
 }
 
 // Release notes are free-form Markdown but live in a single table cell, so flatten them to
@@ -104,32 +102,40 @@ const cell = (md) => {
 }
 
 const row = (t) =>
-  `| ${link(`${SITE_BASE}/${encodeURIComponent(t.name)}/`, `Version ${t.name}`)} | ${day(t.date)} | ${cell(t.description)} |`
+  `| ${link(`${SITE_BASE}/${encodeURIComponent(t.name)}/`, `Version ${t.name}`)} | ${cell(t.description)} |`
 
 const latestRow = hasRelease
-  ? `| ${link(`${SITE_BASE}/`, latest ? `**Latest (${latest})**` : '**Latest**')} | ${latestDate} | Latest released version${latest ? ` (${latest})` : ''} |`
-  : '| **Latest** | | _No version has been released yet._ |'
+  ? `| ${link(`${SITE_BASE}/`, latest ? `**Latest (${latest})**` : '**Latest**')} | ${latestTag ? cell(latestTag.description) : 'Latest released version'} |`
+  : '| **Latest** | _No version has been released yet._ |'
 
+// Every table gets identical column widths (fixed layout). The style travels with the generated page, and
+// pageClass scopes it to this page, so every build (including archived tags) renders the same way.
 const page = `---
 title: Version History
+pageClass: version-history
 ---
+
+<style>
+.version-history .vp-doc table { display: table; width: 100%; table-layout: fixed; }
+.version-history .vp-doc th:nth-child(1), .version-history .vp-doc td:nth-child(1) { width: 35%; }
+.version-history .vp-doc th:nth-child(2), .version-history .vp-doc td:nth-child(2) { width: 65%; }
+</style>
 
 # Version History
 
 ## Current and upcoming
 
-| Version | Date | Description |
-|---|---|---|
+| Version | Description |
+|---|---|
 ${latestRow}
-| ${link(`${SITE_BASE}/develop/`, '**Develop**')} | ${developDate} | Next version in development |
+| ${link(`${SITE_BASE}/develop/`, '**Develop**')} | Next version in development |
 
 ## Released versions
 
-${tags.length ? `| Version | Date | Change |\n|---|---|---|\n${tags.map(row).join('\n')}\n` : '_No tagged releases yet._\n'}
+${releasedTags.length ? `| Version | Description |\n|---|---|\n${releasedTags.map(row).join('\n')}\n` : '_No tagged releases yet._\n'}
 ## Other working versions
 
-None at this time.
-`
+${workingTags.length ? `These versions were never published as releases (for example, Standards for Trial Use).\n\n| Version | Description |\n|---|---|\n${workingTags.map(row).join('\n')}\n` : 'None at this time.\n'}`
 
 fs.writeFileSync(out, page)
-console.log(`generate-history: wrote ${path.relative(REPO_ROOT, out)} (${tags.length} released version${tags.length === 1 ? '' : 's'}; latest = ${latest ?? (hasRelease ? 'untagged' : 'none')})`)
+console.log(`generate-history: wrote ${path.relative(REPO_ROOT, out)} (${releasedTags.length} released, ${workingTags.length} working; latest = ${latest ?? (hasRelease ? 'untagged' : 'none')})`)
