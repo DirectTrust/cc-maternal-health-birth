@@ -15,6 +15,6 @@ title: cc-maternal-health-birth Use Case Guide
   </div>
 </div>
 
-This guide documents the cc-maternal-health-birth use case: exchanging maternal-health pregnancy, birth, and postpartum information among providers, payers, and data utilities using Direct Secure Messaging. It applies the actor, transaction, and payload/metadata patterns defined by the [DirectTrust Metadata and Payloads Framework](https://directtrust.github.io/metadata-and-payloads-guide/) to this specific use case.
+This guide documents the cc-maternal-health-birth use case: exchanging maternal-health pregnancy, birth, and postpartum information among providers, payers, and data utilities using Direct Secure Messaging. It applies the actor, transaction, and payload/metadata patterns defined by the [DirectTrust Metadata and Payloads Framework](https://assets.directtrust.org/metadata-and-payloads-guide/) to this specific use case.
 
 Start with the [Implementer Guidance](/05-implementation-guidance/) for implementation-oriented guidance on applying the architectural principles used throughout this guide, or read the [Use Case Overview](/01-use-case-overview/) for the objectives, scope, and terms behind the use case.

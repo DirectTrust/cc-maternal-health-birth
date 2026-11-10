@@ -1,6 +1,6 @@
 # cc-maternal-health-birth
 
-Implementation Guide for the **cc-maternal-health-birth** use case, built on the DirectTrust Framework for Metadata and Payloads via the Direct Standard® (see the [metadata-and-payloads-guide](https://directtrust.github.io/metadata-and-payloads-guide/)). Published as a [VitePress](https://vitepress.dev) site at `https://directtrust.github.io/cc-maternal-health-birth/` via GitHub Pages.
+Implementation Guide for the **cc-maternal-health-birth** use case, built on the DirectTrust Framework for Metadata and Payloads via the Direct Standard® (see the [metadata-and-payloads-guide](https://assets.directtrust.org/metadata-and-payloads-guide/)). Published as a [VitePress](https://vitepress.dev) site at `https://assets.directtrust.org/cc-maternal-health-birth/` via GitHub Pages.
 
 This repo is a project site, so VitePress is configured with `base: '/cc-maternal-health-birth/'` in `docs/.vitepress/config.mts` to match — if this repo is ever renamed, that value has to be updated or every internal link/image/asset path breaks.
 

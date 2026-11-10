@@ -209,11 +209,11 @@
   padding: 12px 20px;
 }
 
-/* "DirectTrust Technical Docs Home" nav link: style it as a pill button (matching the
+/* "DirectTrust Assets Home" nav link: style it as a pill button (matching the
    home-hero buttons) rather than a plain text nav item, since it jumps you
-   off this site entirely back to the DirectTrust Pages landing page. */
-.VPNavBarMenu .VPLink[href='https://directtrust.github.io'],
-.VPNavScreenMenu .VPLink[href='https://directtrust.github.io'] {
+   off this site entirely back to the DirectTrust assets landing page. */
+.VPNavBarMenu .VPLink[href='https://assets.directtrust.org'],
+.VPNavScreenMenu .VPLink[href='https://assets.directtrust.org'] {
   border: 1px solid var(--vp-button-alt-border);
   color: var(--vp-button-alt-text);
   background-color: var(--vp-button-alt-bg);
@@ -222,15 +222,15 @@
   transition: color 0.25s, border-color 0.25s, background-color 0.25s;
 }
 
-.VPNavBarMenu .VPLink[href='https://directtrust.github.io']:hover,
-.VPNavScreenMenu .VPLink[href='https://directtrust.github.io']:hover {
+.VPNavBarMenu .VPLink[href='https://assets.directtrust.org']:hover,
+.VPNavScreenMenu .VPLink[href='https://assets.directtrust.org']:hover {
   border-color: var(--vp-button-alt-hover-border);
   color: var(--vp-button-alt-hover-text);
   background-color: var(--vp-button-alt-hover-bg);
 }
 
-.VPNavBarMenu .VPLink[href='https://directtrust.github.io'] .link-text-content,
-.VPNavScreenMenu .VPLink[href='https://directtrust.github.io'] .link-text-content {
+.VPNavBarMenu .VPLink[href='https://assets.directtrust.org'] .link-text-content,
+.VPNavScreenMenu .VPLink[href='https://assets.directtrust.org'] .link-text-content {
   color: inherit;
 }
 
